@@ -224,6 +224,7 @@ const CSS = `
 .bar > div { height: 100%; width: 0; background: #0096fa; transition: width .1s; }
 .err { color: #d33; }
 .title { font-weight: 700; margin-bottom: 6px; }
+.title small { font-weight: 400; color: #999; }
 `;
 
 function createUI() {
@@ -234,7 +235,7 @@ function createUI() {
     <style>${CSS}</style>
     <div class="fab">
       <div class="panel" hidden>
-        <div class="title">うごイラ変換</div>
+        <div class="title">うごイラ変換 <small>v${__VERSION__}</small></div>
         <div class="status">形式を選んでください</div>
         <div class="bar"><div></div></div>
         <div class="row">
@@ -299,13 +300,15 @@ async function convert(fmt) {
 }
 
 export function start({ autoOpen = false } = {}) {
-  if (window.__ugoconv) {
+  // 同じ版が既に動いていれば開くだけ。古い版が残っていたら(入れ直しで重複した時など)置き換える
+  if (window.__ugoconv?.version === __VERSION__) {
     window.__ugoconv.open();
     return;
   }
+  document.getElementById('ugoconv-root')?.remove();
   ui = createUI();
   const open = () => { ui.panel.hidden = false; };
-  window.__ugoconv = { open };
+  window.__ugoconv = { open, version: __VERSION__ };
   ui.toggle.addEventListener('click', () => { ui.panel.hidden = !ui.panel.hidden; });
   ui.fmtButtons.forEach((b) => b.addEventListener('click', () => convert(b.dataset.fmt)));
   ui.saveBtn.addEventListener('click', () => pending && saveBlob(pending.blob, pending.filename));
