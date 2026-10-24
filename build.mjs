@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 mkdirSync('docs', { recursive: true });
 const opts = { bundle: true, minify: true, format: 'iife', target: ['safari16', 'chrome100', 'firefox115'], write: false, legalComments: 'none', define: { __VERSION__: JSON.stringify(VERSION) } };
 const us = (await build({ ...opts, entryPoints: ['src/userscript.js'] })).outputFiles[0].text;
@@ -30,8 +30,9 @@ writeFileSync('docs/bookmarklet.js', bm);
 console.log('userscript', (header + us).length, 'bookmarklet', bookmarklet.length);
 const html = readFileSync('src/index.html', 'utf8').replace('__BOOKMARKLET__', () => JSON.stringify(bookmarklet).replace(/<\//g, '<\\/'));
 writeFileSync('docs/index.html', html);
+const check = readFileSync('src/shortcut-check.js', 'utf8').split('\n').filter((l) => l && !l.startsWith('//')).join('');
 const sc = (await build({ ...opts, entryPoints: ['src/shortcut.js'] })).outputFiles[0].text.trim();
 writeFileSync('docs/shortcut.js', sc);
-writeFileSync('docs/shortcut.html', readFileSync('src/shortcut.html', 'utf8').replace('__SHORTCUT_JS__', () => JSON.stringify(sc).replace(/<\//g, '<\\/')).replace('__VERSION__', VERSION));
+writeFileSync('docs/shortcut.html', readFileSync('src/shortcut.html', 'utf8').replace('__SHORTCUT_JS__', () => JSON.stringify(sc).replace(/<\//g, '<\\/')).replace('__CHECK_JS__', () => JSON.stringify(check)).replace('__VERSION__', VERSION));
 writeFileSync('docs/version.json', JSON.stringify({ version: VERSION }) + '\n');
 console.log('shortcut', sc.length);

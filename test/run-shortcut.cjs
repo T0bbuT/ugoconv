@@ -13,11 +13,20 @@ const dir = __dirname;
     return route.fulfill({ status: 404, body: '' });
   });
   await page.goto('https://www.pixiv.net/artworks/123');
-  const result = await page.evaluate((code) => new Promise((resolve) => {
-    window.completion = resolve;
-    (0, eval)(code);
-  }), fs.readFileSync(dir + '/../docs/shortcut.js', 'utf8'));
-  if (result.startsWith('ERROR')) console.log(result);
+  // ショートカットと同じく、各呼び出しは completion() まで数秒以内に終わる必要がある
+  const runAction = (code) => page.evaluate((c) => new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('completion が 3 秒以内に呼ばれなかった')), 3000);
+    window.completion = (v) => { clearTimeout(timer); resolve(v); };
+    (0, eval)(c);
+  }), code);
+  console.log('start ->', await runAction(fs.readFileSync(dir + '/../docs/shortcut.js', 'utf8')));
+  const check = fs.readFileSync(dir + '/../src/shortcut-check.js', 'utf8');
+  let result = '';
+  for (let i = 0; i < 60 && !result; i++) {
+    await page.waitForTimeout(500);
+    result = await runAction(check);
+  }
+  if (!result || result.startsWith('ERROR')) console.log('shortcut FAILED', result);
   else { fs.writeFileSync(dir + '/out-shortcut.mp4', Buffer.from(result, 'base64')); console.log('shortcut OK', Buffer.from(result, 'base64').length); }
   await browser.close();
 })();

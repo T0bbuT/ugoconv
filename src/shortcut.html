@@ -28,19 +28,27 @@
   <p class="note">Userscripts アプリなしで、Safari の共有メニューから変換して「写真」に保存します。</p>
 
   <section>
-    <h2>1. コードをコピー</h2>
-    <p><button class="btn" id="copy">変換コードをコピー</button> <span class="note" id="copied"></span></p>
+    <h2>1. コードは 2 種類あります</h2>
+    <p class="note">ショートカットの JavaScript は数秒で打ち切られるので、「変換を始めるコード」と「できたか確かめるコード」に分けています。それぞれ、手順の中で使う直前にコピーしてください。</p>
+    <p><button class="btn" data-copy="start">A: 変換を始めるコードをコピー</button></p>
+    <p><button class="btn" data-copy="check">B: 確かめるコードをコピー</button></p>
+    <p class="note" id="copied"></p>
   </section>
 
   <section>
     <h2>2. ショートカットを作る</h2>
     <ol>
       <li>「ショートカット」アプリで右上の <b>＋</b>。名前を <b>うごイラ変換</b> にする</li>
-      <li>下の <b>ⓘ（詳細）</b> で <b>共有シートに表示</b> をオン</li>
-      <li>一番上の「共有シートから○○を受け取る」の種類をタップし、<b>Safari Web ページ</b> だけにする</li>
-      <li>アクション <b>Web ページで JavaScript を実行</b> を追加。入力は「ショートカットの入力」のまま。中の見本コードを全部消して、1 でコピーしたコードを貼り付ける</li>
-      <li>アクション <b>Base64 エンコード</b> を追加し、「エンコード」をタップして <b>デコード</b> に変える</li>
-      <li>アクション <b>写真アルバムに保存</b> を追加</li>
+      <li>下の <b>ⓘ（詳細）</b> で <b>共有シートに表示</b> をオン。一番上の「共有シートから○○を受け取る」の種類は <b>Safari Web ページ</b> だけにする</li>
+      <li>アクション <b>Web ページで JavaScript を実行</b> を追加。中の見本コードを全部消して <b>コード A</b> を貼り付ける</li>
+      <li>アクション <b>繰り返す</b> を追加し、回数を <b>120</b> にする。以下 5〜11 は「繰り返す」と「繰り返しの終了」の<b>間</b>に入れる</li>
+      <li><b>待機</b> を追加（1 秒）</li>
+      <li><b>Web ページで JavaScript を実行</b> を追加。入力（青い文字）をタップして <b>ショートカットの入力</b> にし、中身を <b>コード B</b> に置き換える</li>
+      <li><b>if</b> を追加。条件を「<b>JavaScript の結果</b>」が「<b>値がある</b>」にする。以下 8〜11 は「if」と「その他」の間に入れる</li>
+      <li><b>Base64 エンコード</b> を追加し、「エンコード」をタップして <b>デコード</b> に変える（入力は「JavaScript の結果」）</li>
+      <li><b>名前を設定</b> を追加し、名前を <code>ugoira.mp4</code> にする</li>
+      <li><b>写真アルバムに保存</b> を追加</li>
+      <li><b>このショートカットを停止</b> を追加</li>
     </ol>
     <p class="note">「Web ページで JavaScript を実行」が動かない場合は、設定 → アプリ → ショートカット → 詳細 → <b>スクリプトの実行を許可</b> をオンにしてください。</p>
   </section>
@@ -49,22 +57,23 @@
     <h2>3. 試す</h2>
     <ol>
       <li>Safari で pixiv にログインし、うごイラの作品ページを開く</li>
-      <li>共有ボタン → <b>うごイラ変換</b>（初回は pixiv での実行を「許可」）</li>
-      <li>しばらく待つと「写真」に MP4 が保存される</li>
+      <li>Safari 自体の共有メニュー（アドレスバー左のアイコン →「共有」）→ <b>うごイラ変換</b>。pixiv のページ内にある共有ボタンではありません。初回は pixiv での実行を「許可」</li>
+      <li>右下のパネルで変換が進み、終わると「写真」に MP4 が保存される。うまく保存されなかった時は、パネルの「保存する」から手動でも保存できます</li>
     </ol>
   </section>
 </main>
 <script>
-  const CODE = __SHORTCUT_JS__;
-  document.getElementById('copy').addEventListener('click', async () => {
+  const CODES = { start: __SHORTCUT_JS__, check: __CHECK_JS__ };
+  document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
     const out = document.getElementById('copied');
+    const code = CODES[btn.dataset.copy];
     try {
-      await navigator.clipboard.writeText(CODE);
-      out.textContent = `コピーしました（${Math.round(CODE.length / 1024)} KB）`;
+      await navigator.clipboard.writeText(code);
+      out.textContent = `コード ${btn.dataset.copy === 'start' ? 'A' : 'B'} をコピーしました`;
     } catch {
       out.textContent = 'コピーできませんでした。もう一度押してください';
     }
-  });
+  }));
 </script>
 </body>
 </html>

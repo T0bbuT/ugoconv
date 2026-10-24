@@ -297,14 +297,11 @@ async function convert(fmt, { forShortcut = false } = {}) {
     const blob = fmt === 'mp4' ? await encodeMp4(frames, onProgress) : await encodeGif(frames, onProgress);
     pending = { blob, filename: `pixiv_${id}.${fmt}` };
     const size = blob.size >= 1024 * 1024 ? `${(blob.size / 1024 / 1024).toFixed(1)} MB` : `${Math.ceil(blob.size / 1024)} KB`;
-    if (forShortcut) {
-      ui.setStatus(`完了（${size}）。写真に保存しています…`, 1);
-      return pending;
-    }
-    ui.setStatus(`完了（${size}）`, 1);
+    ui.setStatus(forShortcut ? `完了（${size}）。写真に保存しています…` : `完了（${size}）`, 1);
     ui.saveRow.hidden = false;
     // PC はそのまま保存。スマホの共有シートはタップ直後でないと開けないのでボタンを押してもらう
-    if (!matchMedia('(pointer: coarse)').matches) await saveBlob(pending.blob, pending.filename);
+    // ショートカットの場合も、保存できなかった時のために「保存する」ボタンは出しておく
+    if (!forShortcut && !matchMedia('(pointer: coarse)').matches) await saveBlob(pending.blob, pending.filename);
     return pending;
   } catch (e) {
     console.error('[ugoconv]', e);
@@ -418,8 +415,9 @@ export function start({ autoOpen = false, autoFormat = takeAutoFormat(), updateC
 }
 
 // ---------- iPhone のショートカット用 ----------
-// 「Web ページで JavaScript を実行」から呼ばれ、変換結果を Base64 文字列で返す。
-// ショートカット側でデコードして写真に保存する
+// ショートカットの「Web ページで JavaScript を実行」は数秒で打ち切られるので、
+// 1 回目の呼び出しで変換を始めてすぐ返し、ショートカット側が短い確認用コードを
+// 繰り返し呼んで、出来上がった MP4 を Base64 で受け取る(確認用コードは shortcut.html)
 
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
@@ -430,9 +428,18 @@ function blobToBase64(blob) {
   });
 }
 
-export async function runForShortcut(fmt = 'mp4') {
+export function startForShortcut(fmt = 'mp4') {
+  const id = currentIllustId();
+  const running = window.__ugoconvJob;
+  if (running && running.id === id && !running.error) return; // 同じ作品の変換中・変換済みならそのまま
+  const job = { id, base64: null, error: null };
+  window.__ugoconvJob = job;
   start({ autoOpen: true });
-  const result = await convert(fmt, { forShortcut: true });
-  if (!result) throw new Error('すでに変換中です');
-  return blobToBase64(result.blob);
+  convert(fmt, { forShortcut: true })
+    .then((result) => {
+      if (!result) throw new Error('すでに変換中です');
+      return blobToBase64(result.blob);
+    })
+    .then((base64) => { job.base64 = base64; })
+    .catch((e) => { job.error = e.message || String(e); });
 }
