@@ -297,7 +297,7 @@ async function convert(fmt, { forShortcut = false } = {}) {
     const blob = fmt === 'mp4' ? await encodeMp4(frames, onProgress) : await encodeGif(frames, onProgress);
     pending = { blob, filename: `pixiv_${id}.${fmt}` };
     const size = blob.size >= 1024 * 1024 ? `${(blob.size / 1024 / 1024).toFixed(1)} MB` : `${Math.ceil(blob.size / 1024)} KB`;
-    ui.setStatus(forShortcut ? `完了（${size}）。写真に保存しています…` : `完了（${size}）`, 1);
+    ui.setStatus(forShortcut ? `完了（${size}）。「保存する」を押してください` : `完了（${size}）`, 1);
     ui.saveRow.hidden = false;
     // PC はそのまま保存。スマホの共有シートはタップ直後でないと開けないのでボタンを押してもらう
     // ショートカットの場合も、保存できなかった時のために「保存する」ボタンは出しておく
@@ -415,9 +415,9 @@ export function start({ autoOpen = false, autoFormat = takeAutoFormat(), updateC
 }
 
 // ---------- iPhone のショートカット用 ----------
-// ショートカットの「Web ページで JavaScript を実行」は数秒で打ち切られるので、
-// 1 回目の呼び出しで変換を始めてすぐ返し、ショートカット側が短い確認用コードを
-// 繰り返し呼んで、出来上がった MP4 を Base64 で受け取る(確認用コードは shortcut.html)
+// ショートカットの「Web ページで JavaScript を実行」は数秒で打ち切られるので、変換を始めてすぐ返す。
+// 保存はパネルの「保存する」から行う(数 MB の結果をショートカットへ返すのも時間切れになった)。
+// src/shortcut-check.js を繰り返し呼べば Base64 で受け取ることもできる
 
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
