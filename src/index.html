@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>うごイラ変換（試作）</title>
+<style>
+  :root { --bg: #f7f8fa; --fg: #1d1f23; --muted: #5b616b; --card: #fff; --line: #e3e6eb; --accent: #0096fa; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #15171a; --fg: #e8eaed; --muted: #a0a6ae; --card: #1f2226; --line: #33373d; --accent: #3fb0ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+  p.lead { color: var(--muted); margin-top: 0; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 12px; margin-top: 16px; }
+  ol { padding-left: 1.4em; }
+  code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .9em; word-break: break-all; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; border: 0; border-radius: 999px; padding: 8px 18px; font-size: 1rem; cursor: pointer; }
+  textarea { width: 100%; height: 6em; font: 12px monospace; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
+  .note { color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>うごイラ変換（試作）</h1>
+  <p class="lead">pixiv のうごイラを、あなたの端末の中で MP4 / GIF に変換して保存します。変換にサーバーを使わないので、運営費がかかりません。ブラウザで pixiv にログインしていれば R-18 作品も変換できます。</p>
+
+  <section>
+    <h2>使い方</h2>
+    <p>pixiv の作品ページの右下に出る「うごイラ変換」ボタンを押して、MP4 か GIF を選びます。スマホは変換が終わったら「保存する」を押してください（iPhone は「ビデオを保存」で写真アプリに入ります）。</p>
+    <p class="note">最初に一度、使うブラウザで pixiv にログインしておいてください（アプリのログインとは別です）。</p>
+  </section>
+
+  <section>
+    <h2>PC（Chrome / Edge / Firefox）</h2>
+    <ol>
+      <li>拡張機能 Tampermonkey か Violentmonkey を入れる</li>
+      <li><a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a> を押してインストール</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>iPhone（Safari）</h2>
+    <ol>
+      <li>App Store で無料の「Userscripts」アプリを入れ、設定 → アプリ → Safari → 機能拡張 で Userscripts をオンにして、www.pixiv.net を許可する</li>
+      <li>Safari でこのページの <a href="ugoira-converter.user.js">スクリプト</a> を開き、アドレスバーの「ぁあ」→ Userscripts からインストール</li>
+    </ol>
+    <h2>pixiv アプリから 2 タップで変換する（ショートカット）</h2>
+    <ol>
+      <li>「ショートカット」アプリで新規ショートカットを作り、名前を「うごイラ変換」にする。詳細設定で「共有シートに表示」をオンにし、受け取る種類を URL とテキストにする</li>
+      <li>アクション「テキストを照合」を追加。パターンに <code>(?&lt;=artworks/)\d+</code>、対象に「ショートカットの入力」</li>
+      <li>アクション「URL」を追加し、<code>x-safari-https://www.pixiv.net/artworks/</code> の後ろに「照合」を差し込み、最後に <code>#ugoconv=mp4</code> を付ける</li>
+      <li>アクション「URL を開く」を追加</li>
+    </ol>
+    <p>あとは pixiv アプリの共有ボタン →「うごイラ変換」で、Safari が開いて自動で MP4 変換が始まります（GIF にしたい場合は最後を <code>#ugoconv=gif</code> に）。</p>
+    <p class="note"><code>x-safari-https://</code> は iOS 17 以降で Safari に直接開かせるための書き方です。普通の https のリンクだと pixiv アプリに戻されることがあります。</p>
+  </section>
+
+  <section>
+    <h2>Android</h2>
+    <ol>
+      <li>Firefox を入れ、アドオンから Violentmonkey を追加する</li>
+      <li>Firefox でこのページの <a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a></li>
+      <li>pixiv アプリの共有ボタン → Firefox で作品を開き、右下のボタンから変換</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>スクリプトを入れられないブラウザ（ブックマークレット）</h2>
+    <p>Android の Chrome などでは、下のコードをブックマークの URL 欄に貼り付けて保存します。pixiv の作品ページを開いた状態で、アドレスバーにブックマーク名を入力して候補から選ぶと実行できます。</p>
+    <p><a class="btn" id="bm-link" href="#">うごイラ変換</a> <span class="note">PC はこのボタンをブックマークバーへドラッグでも登録できます</span></p>
+    <textarea id="bm" readonly></textarea>
+    <p><button class="btn" id="copy">コードをコピー</button> <span class="note" id="copied"></span></p>
+  </section>
+
+  <p class="note">この試作は pixiv（ピクシブ株式会社）とは無関係です。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p>
+</main>
+<script>
+  const BOOKMARKLET = __BOOKMARKLET__;
+  document.getElementById('bm').value = BOOKMARKLET;
+  document.getElementById('bm-link').href = BOOKMARKLET;
+  document.getElementById('bm-link').addEventListener('click', (e) => e.preventDefault());
+  document.getElementById('copy').addEventListener('click', async () => {
+    const out = document.getElementById('copied');
+    try { await navigator.clipboard.writeText(BOOKMARKLET); out.textContent = 'コピーしました'; }
+    catch { document.getElementById('bm').select(); out.textContent = '選択したので長押しでコピーしてください'; }
+  });
+</script>
+</body>
+</html>
