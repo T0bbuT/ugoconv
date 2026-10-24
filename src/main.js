@@ -299,7 +299,26 @@ async function convert(fmt) {
   }
 }
 
-export function start({ autoOpen = false } = {}) {
+// 共有ショートカットから #ugoconv=mp4 付きで開かれたかを調べる。
+// pixiv はページ表示中に URL を書き換えて # 以降を消すことがあるので、
+// ユーザースクリプトはページ読み込みの最初(document-start)にこれを呼んでおく。
+// リダイレクトで消えた場合に備えて sessionStorage にも控える
+const AUTO_KEY = 'ugoconv-auto';
+export function takeAutoFormat() {
+  const m = location.href.match(/[#?&]ugoconv(?:=(mp4|gif))?/);
+  try {
+    if (m) {
+      const fmt = m[1] || 'mp4';
+      sessionStorage.setItem(AUTO_KEY, JSON.stringify({ fmt, at: Date.now() }));
+      return fmt;
+    }
+    const saved = JSON.parse(sessionStorage.getItem(AUTO_KEY) || 'null');
+    if (saved && Date.now() - saved.at < 30_000) return saved.fmt;
+  } catch { /* sessionStorage が使えない環境 */ }
+  return null;
+}
+
+export function start({ autoOpen = false, autoFormat = takeAutoFormat() } = {}) {
   // 同じ版が既に動いていれば開くだけ。古い版が残っていたら(入れ直しで重複した時など)置き換える
   if (window.__ugoconv?.version === __VERSION__) {
     window.__ugoconv.open();
@@ -322,11 +341,11 @@ export function start({ autoOpen = false } = {}) {
   setInterval(syncVisibility, 1000);
 
   // 共有ショートカットから #ugoconv=mp4 付きで開かれたら自動で変換
-  const auto = location.hash.match(/ugoconv(?:=(mp4|gif))?/);
-  if (auto) {
+  if (autoFormat && currentIllustId()) {
+    try { sessionStorage.removeItem(AUTO_KEY); } catch { /* 無視 */ }
+    if (/ugoconv/.test(location.hash)) history.replaceState(history.state, '', location.pathname + location.search);
     open();
-    history.replaceState(null, '', location.pathname + location.search);
-    convert(auto[1] || 'mp4');
+    convert(autoFormat);
   } else if (autoOpen) {
     open();
   }

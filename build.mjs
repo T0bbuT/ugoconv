@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-const VERSION = '0.1.3';
+const VERSION = '0.1.4';
 mkdirSync('docs', { recursive: true });
 const opts = { bundle: true, minify: true, format: 'iife', target: ['safari16', 'chrome100', 'firefox115'], write: false, legalComments: 'none', define: { __VERSION__: JSON.stringify(VERSION) } };
 const us = (await build({ ...opts, entryPoints: ['src/userscript.js'] })).outputFiles[0].text;
@@ -13,7 +13,7 @@ const header = `// ==UserScript==
 // @connect      i.pximg.net
 // @grant        GM.xmlHttpRequest
 // @grant        GM_xmlhttpRequest
-// @run-at       document-idle
+// @run-at       document-start
 // @noframes
 // @homepageURL  https://t0bbut.github.io/ugoconv/
 // @downloadURL  https://t0bbut.github.io/ugoconv/ugoira-converter.user.js
