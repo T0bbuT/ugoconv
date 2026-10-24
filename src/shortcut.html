@@ -20,6 +20,7 @@
   b { color: var(--accent); }
   .btn { display: inline-block; background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 10px 20px; font-size: 1rem; font-weight: 600; }
   .note { color: var(--muted); font-size: .9rem; }
+  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: .85rem; line-height: 1.6; overflow-x: auto; }
 </style>
 </head>
 <body>
@@ -50,6 +51,19 @@
       <li><b>写真アルバムに保存</b> を追加</li>
       <li><b>このショートカットを停止</b> を追加</li>
     </ol>
+    <p>出来上がりはこの形です（字下げは「繰り返す」や「if」の中に入っていることを表します）。追加したアクションは一番下に入るので、長押しでドラッグして位置を合わせてください。</p>
+    <pre>JavaScript を実行（コード A）
+繰り返す 120 回
+    待機 1 秒
+    JavaScript を実行（コード B）
+    if「JavaScript の結果」に値がある
+        Base64 デコード
+        名前を設定 ugoira.mp4
+        写真アルバムに保存
+        このショートカットを停止
+    その他
+    if の終了
+繰り返しの終了</pre>
     <p class="note">「Web ページで JavaScript を実行」が動かない場合は、設定 → アプリ → ショートカット → 詳細 → <b>スクリプトの実行を許可</b> をオンにしてください。</p>
   </section>
 
