@@ -52,8 +52,8 @@
     <ol>
       <li>「ショートカット」アプリで新規ショートカットを作り、名前を「うごイラ変換」にする。詳細設定で「共有シートに表示」をオンにし、受け取る種類を URL とテキストにする</li>
       <li>アクション「テキストを照合」を追加。パターンに <code>(?&lt;=artworks/)\d+</code>、対象に「ショートカットの入力」</li>
-      <li>アクション「URL」を追加し、<code>x-safari-https://www.pixiv.net/artworks/</code> の後ろに「照合」を差し込み、最後に <code>#ugoconv=mp4</code> を付ける</li>
-      <li>アクション「URL を開く」を追加</li>
+      <li>アクション「テキスト」を追加し、<code>x-safari-https://www.pixiv.net/artworks/</code> と入力。続けてキーボード上の候補から「一致」を差し込み、最後に <code>#ugoconv=mp4</code> と入力する（「URL」アクションは欄が狭く差し込みにくいので「テキスト」を使います）</li>
+      <li>アクション「URL を開く」を追加し、開く対象を「テキスト」にする</li>
     </ol>
     <p>あとは pixiv アプリの共有ボタン →「うごイラ変換」で、Safari が開いて自動で MP4 変換が始まります（GIF にしたい場合は最後を <code>#ugoconv=gif</code> に）。</p>
     <p class="note"><code>x-safari-https://</code> は iOS 17 以降で Safari に直接開かせるための書き方です。普通の https のリンクだと pixiv アプリに戻されることがあります。</p>
