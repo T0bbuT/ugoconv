@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-const VERSION = '0.1.4';
+const VERSION = '0.2.0';
 mkdirSync('docs', { recursive: true });
 const opts = { bundle: true, minify: true, format: 'iife', target: ['safari16', 'chrome100', 'firefox115'], write: false, legalComments: 'none', define: { __VERSION__: JSON.stringify(VERSION) } };
 const us = (await build({ ...opts, entryPoints: ['src/userscript.js'] })).outputFiles[0].text;
@@ -11,6 +11,7 @@ const header = `// ==UserScript==
 // @description  pixiv のうごイラを端末内で MP4 / GIF に変換して保存します。サーバーを使いません。
 // @match        https://www.pixiv.net/*
 // @connect      i.pximg.net
+// @connect      t0bbut.github.io
 // @grant        GM.xmlHttpRequest
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
@@ -29,3 +30,8 @@ writeFileSync('docs/bookmarklet.js', bm);
 console.log('userscript', (header + us).length, 'bookmarklet', bookmarklet.length);
 const html = readFileSync('src/index.html', 'utf8').replace('__BOOKMARKLET__', () => JSON.stringify(bookmarklet).replace(/<\//g, '<\\/'));
 writeFileSync('docs/index.html', html);
+const sc = (await build({ ...opts, entryPoints: ['src/shortcut.js'] })).outputFiles[0].text.trim();
+writeFileSync('docs/shortcut.js', sc);
+writeFileSync('docs/shortcut.html', readFileSync('src/shortcut.html', 'utf8').replace('__SHORTCUT_JS__', () => JSON.stringify(sc).replace(/<\//g, '<\\/')).replace('__VERSION__', VERSION));
+writeFileSync('docs/version.json', JSON.stringify({ version: VERSION }) + '\n');
+console.log('shortcut', sc.length);

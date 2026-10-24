@@ -225,6 +225,10 @@ const CSS = `
 .err { color: #d33; }
 .title { font-weight: 700; margin-bottom: 6px; }
 .title small { font-weight: 400; color: #999; }
+.update { margin-top: 10px; font-size: 13px; }
+.update[hidden] { display: none; }
+.update a { color: #0096fa; font-weight: 600; }
+.toggle.has-update::after { content: ''; display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: #ff5252; vertical-align: middle; }
 `;
 
 function createUI() {
@@ -243,6 +247,7 @@ function createUI() {
           <button class="btn" data-fmt="gif">GIF</button>
         </div>
         <div class="row save-row" hidden><button class="btn save">保存する</button></div>
+        <div class="update" hidden><a target="_blank" rel="noopener"></a></div>
       </div>
       <button class="btn toggle">うごイラ変換</button>
     </div>`;
@@ -256,6 +261,7 @@ function createUI() {
     saveRow: $('.save-row'),
     saveBtn: $('.save'),
     toggle: $('.toggle'),
+    update: $('.update'),
     setStatus(text, p, isError) {
       this.status.textContent = text;
       this.status.classList.toggle('err', !!isError);
@@ -270,10 +276,15 @@ let ui = null;
 let busy = false;
 let pending = null; // { blob, filename }
 
-async function convert(fmt) {
-  if (busy) return;
+// forShortcut: iPhone のショートカットから呼ばれた時。保存はショートカット側で行い、失敗は呼び出し元に投げる
+async function convert(fmt, { forShortcut = false } = {}) {
+  if (busy) return null;
   const id = currentIllustId();
-  if (!id) { ui.setStatus('作品ページで実行してください', 0, true); return; }
+  if (!id) {
+    ui.setStatus('作品ページで実行してください', 0, true);
+    if (forShortcut) throw new Error('pixiv の作品ページで実行してください');
+    return null;
+  }
   busy = true;
   pending = null;
   ui.saveRow.hidden = true;
@@ -286,13 +297,20 @@ async function convert(fmt) {
     const blob = fmt === 'mp4' ? await encodeMp4(frames, onProgress) : await encodeGif(frames, onProgress);
     pending = { blob, filename: `pixiv_${id}.${fmt}` };
     const size = blob.size >= 1024 * 1024 ? `${(blob.size / 1024 / 1024).toFixed(1)} MB` : `${Math.ceil(blob.size / 1024)} KB`;
+    if (forShortcut) {
+      ui.setStatus(`完了（${size}）。写真に保存しています…`, 1);
+      return pending;
+    }
     ui.setStatus(`完了（${size}）`, 1);
     ui.saveRow.hidden = false;
     // PC はそのまま保存。スマホの共有シートはタップ直後でないと開けないのでボタンを押してもらう
     if (!matchMedia('(pointer: coarse)').matches) await saveBlob(pending.blob, pending.filename);
+    return pending;
   } catch (e) {
     console.error('[ugoconv]', e);
     ui.setStatus(e.message || String(e), 0, true);
+    if (forShortcut) throw e;
+    return null;
   } finally {
     busy = false;
     ui.setBusy(false);
@@ -318,7 +336,53 @@ export function takeAutoFormat() {
   return null;
 }
 
-export function start({ autoOpen = false, autoFormat = takeAutoFormat() } = {}) {
+// ---------- 更新のお知らせ ----------
+// iPhone の Userscripts アプリなどは自動更新されないので、1 日 1 回だけ最新の版数を確かめて知らせる
+
+const SITE = 'https://t0bbut.github.io/ugoconv/';
+const UPDATE_KEY = 'ugoconv-update';
+
+function isNewer(a, b) {
+  const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) > (pb[i] || 0);
+  return false;
+}
+
+async function fetchLatestVersion() {
+  try {
+    const res = await fetch(`${SITE}version.json`, { cache: 'no-store', credentials: 'omit' });
+    return (await res.json()).version;
+  } catch (e) {
+    const request = gmRequest();
+    if (!request) throw e;
+    return new Promise((resolve, reject) => request({
+      method: 'GET',
+      url: `${SITE}version.json?t=${Date.now()}`,
+      onload: (r) => { try { resolve(JSON.parse(r.responseText).version); } catch (err) { reject(err); } },
+      onerror: reject,
+    }));
+  }
+}
+
+async function checkUpdate() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(UPDATE_KEY) || 'null'); } catch { /* 無視 */ }
+  let latest = saved?.latest;
+  if (!saved || Date.now() - saved.at > 24 * 60 * 60 * 1000) {
+    try {
+      latest = await fetchLatestVersion();
+      localStorage.setItem(UPDATE_KEY, JSON.stringify({ latest, at: Date.now() }));
+    } catch { return; } // 確認できなくても変換には関係ないので黙って諦める
+  }
+  if (!latest || !isNewer(latest, __VERSION__)) return;
+  const link = ui.update.querySelector('a');
+  link.href = `${SITE}ugoira-converter.user.js`;
+  link.textContent = `新しい版 v${latest} があります → 更新する`;
+  ui.update.hidden = false;
+  ui.toggle.classList.add('has-update');
+}
+
+export function start({ autoOpen = false, autoFormat = takeAutoFormat(), updateCheck = false } = {}) {
   // 同じ版が既に動いていれば開くだけ。古い版が残っていたら(入れ直しで重複した時など)置き換える
   if (window.__ugoconv?.version === __VERSION__) {
     window.__ugoconv.open();
@@ -341,6 +405,8 @@ export function start({ autoOpen = false, autoFormat = takeAutoFormat() } = {}) 
   setInterval(syncVisibility, 1000);
 
   // 共有ショートカットから #ugoconv=mp4 付きで開かれたら自動で変換
+  if (updateCheck) checkUpdate();
+
   if (autoFormat && currentIllustId()) {
     try { sessionStorage.removeItem(AUTO_KEY); } catch { /* 無視 */ }
     if (/ugoconv/.test(location.hash)) history.replaceState(history.state, '', location.pathname + location.search);
@@ -349,4 +415,24 @@ export function start({ autoOpen = false, autoFormat = takeAutoFormat() } = {}) 
   } else if (autoOpen) {
     open();
   }
+}
+
+// ---------- iPhone のショートカット用 ----------
+// 「Web ページで JavaScript を実行」から呼ばれ、変換結果を Base64 文字列で返す。
+// ショートカット側でデコードして写真に保存する
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1]);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+export async function runForShortcut(fmt = 'mp4') {
+  start({ autoOpen: true });
+  const result = await convert(fmt, { forShortcut: true });
+  if (!result) throw new Error('すでに変換中です');
+  return blobToBase64(result.blob);
 }

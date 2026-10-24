@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iPhone ショートカット（実験版）</title>
+<style>
+  :root { --bg: #f7f8fa; --fg: #1d1f23; --muted: #5b616b; --card: #fff; --line: #e3e6eb; --accent: #0096fa; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #15171a; --fg: #e8eaed; --muted: #a0a6ae; --card: #1f2226; --line: #33373d; --accent: #3fb0ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 12px; margin-top: 16px; }
+  ol { padding-left: 1.4em; }
+  li { margin: 6px 0; }
+  b { color: var(--accent); }
+  .btn { display: inline-block; background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 10px 20px; font-size: 1rem; font-weight: 600; }
+  .note { color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>iPhone ショートカット（実験版 v__VERSION__）</h1>
+  <p class="note">Userscripts アプリなしで、Safari の共有メニューから変換して「写真」に保存します。</p>
+
+  <section>
+    <h2>1. コードをコピー</h2>
+    <p><button class="btn" id="copy">変換コードをコピー</button> <span class="note" id="copied"></span></p>
+  </section>
+
+  <section>
+    <h2>2. ショートカットを作る</h2>
+    <ol>
+      <li>「ショートカット」アプリで右上の <b>＋</b>。名前を <b>うごイラ変換</b> にする</li>
+      <li>下の <b>ⓘ（詳細）</b> で <b>共有シートに表示</b> をオン</li>
+      <li>一番上の「共有シートから○○を受け取る」の種類をタップし、<b>Safari Web ページ</b> だけにする</li>
+      <li>アクション <b>Web ページで JavaScript を実行</b> を追加。入力は「ショートカットの入力」のまま。中の見本コードを全部消して、1 でコピーしたコードを貼り付ける</li>
+      <li>アクション <b>Base64 エンコード</b> を追加し、「エンコード」をタップして <b>デコード</b> に変える</li>
+      <li>アクション <b>写真アルバムに保存</b> を追加</li>
+    </ol>
+    <p class="note">「Web ページで JavaScript を実行」が動かない場合は、設定 → アプリ → ショートカット → 詳細 → <b>スクリプトの実行を許可</b> をオンにしてください。</p>
+  </section>
+
+  <section>
+    <h2>3. 試す</h2>
+    <ol>
+      <li>Safari で pixiv にログインし、うごイラの作品ページを開く</li>
+      <li>共有ボタン → <b>うごイラ変換</b>（初回は pixiv での実行を「許可」）</li>
+      <li>しばらく待つと「写真」に MP4 が保存される</li>
+    </ol>
+  </section>
+</main>
+<script>
+  const CODE = __SHORTCUT_JS__;
+  document.getElementById('copy').addEventListener('click', async () => {
+    const out = document.getElementById('copied');
+    try {
+      await navigator.clipboard.writeText(CODE);
+      out.textContent = `コピーしました（${Math.round(CODE.length / 1024)} KB）`;
+    } catch {
+      out.textContent = 'コピーできませんでした。もう一度押してください';
+    }
+  });
+</script>
+</body>
+</html>
