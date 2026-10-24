@@ -43,22 +43,24 @@
   </section>
 
   <section>
-    <h2>iPhone（Safari）</h2>
-    <p><b>実験中:</b> Userscripts アプリを使わず、ショートカットだけで変換する方法を試しています → <a href="shortcut.html">ショートカット実験版</a></p>
+    <h2>iPhone（おすすめ: ショートカット 1 つだけ）</h2>
+    <ol>
+      <li><a class="btn" href="https://www.icloud.com/shortcuts/3d4eaf0f8efc41b0a46af1d6992592cd">ショートカットを追加</a> を押して「ショートカットを追加」</li>
+      <li>Safari で pixiv にログインしておく（R-18 の変換に必要。アプリのログインとは別です）</li>
+    </ol>
+    <p><b>Safari で見ている時:</b> Safari の共有メニュー（アドレスバー左のアイコン →「共有」）→ ショートカットを選ぶ → 変換が終わったら「保存する」→「ビデオを保存」</p>
+    <p><b>pixiv アプリで見ている時:</b> 作品の共有 → ショートカットを選ぶ → Safari で作品が開くので、上と同じ手順</p>
+    <p class="note">初回は pixiv での実行を「許可」してください。動かない場合は 設定 → アプリ → ショートカット → 詳細 →「スクリプトの実行を許可」をオンに。中身や自分で作る手順は <a href="shortcut.html">こちら</a>。</p>
+  </section>
+
+  <section>
+    <h2>iPhone（別の方法: Userscripts アプリ）</h2>
+    <p class="note">準備は多めですが、ボタン 1 つで変換でき、GIF も選べます。</p>
     <ol>
       <li>App Store で無料の「Userscripts」アプリを入れ、設定 → アプリ → Safari → 機能拡張 で Userscripts をオンにする</li>
-      <li>Safari で pixiv を開き、アドレスバーの「ぁあ」（または拡張機能のアイコン）→ Userscripts →「常に許可」で、pixiv に対してだけ許可する（設定画面の「他の Web サイト」を丸ごと許可する必要はありません）</li>
+      <li>Safari で pixiv を開き、アドレスバーの「ぁあ」（または拡張機能のアイコン）→ Userscripts →「常に許可」で、pixiv に対してだけ許可する</li>
       <li>Safari でこのページの <a href="ugoira-converter.user.js">スクリプト</a> を開き、アドレスバーの「ぁあ」→ Userscripts からインストール</li>
     </ol>
-    <h2>pixiv アプリから 2 タップで変換する（ショートカット）</h2>
-    <ol>
-      <li>「ショートカット」アプリで新規ショートカットを作り、名前を「うごイラ変換」にする。詳細設定で「共有シートに表示」をオンにし、受け取る種類を URL とテキストにする</li>
-      <li>アクション「テキストを照合」を追加。パターンに <code>(?&lt;=artworks/)\d+</code>、対象に「ショートカットの入力」</li>
-      <li>アクション「テキスト」を追加し、<code>x-safari-https://www.pixiv.net/artworks/</code> と入力。続けてキーボード上の候補から「一致」を差し込み、最後に <code>#ugoconv=mp4</code> と入力する（「URL」アクションは欄が狭く差し込みにくいので「テキスト」を使います）</li>
-      <li>アクション「URL を開く」を追加し、開く対象を「テキスト」にする</li>
-    </ol>
-    <p>あとは pixiv アプリの共有ボタン →「うごイラ変換」で、Safari が開いて自動で MP4 変換が始まります（GIF にしたい場合は最後を <code>#ugoconv=gif</code> に）。</p>
-    <p class="note"><code>x-safari-https://</code> は iOS 17 以降で Safari に直接開かせるための書き方です。普通の https のリンクだと pixiv アプリに戻されることがあります。</p>
   </section>
 
   <section>
