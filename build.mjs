@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 mkdirSync('docs', { recursive: true });
 const opts = { bundle: true, minify: true, format: 'iife', target: ['safari16', 'chrome100', 'firefox115'], write: false, legalComments: 'none' };
 const us = (await build({ ...opts, entryPoints: ['src/userscript.js'] })).outputFiles[0].text;

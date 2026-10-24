@@ -71,18 +71,28 @@ async function fetchZip(url, onProgress) {
 }
 
 async function loadFrames(meta, onProgress) {
-  const zip = await fetchZip(meta.originalSrc || meta.src, (p) => onProgress('ダウンロード中', p));
-  const files = unzipSync(zip);
+  const files = unzipSync(await fetchZip(meta.originalSrc || meta.src, (p) => onProgress('ダウンロード中', p)));
   const type = meta.mime_type || 'image/jpeg';
-  const frames = [];
-  for (let i = 0; i < meta.frames.length; i++) {
-    const f = meta.frames[i];
+  // 画像のデコードは変換時に 1 コマずつ行う。全コマを先にデコードすると
+  // 高解像度の作品でスマホのメモリが足りなくなり、Safari がページごと落ちる
+  const frames = meta.frames.map((f) => {
     const data = files[f.file];
     if (!data) throw new Error(`zip 内に ${f.file} がありません`);
-    frames.push({ bitmap: await createImageBitmap(new Blob([data], { type })), delay: f.delay });
-    onProgress('展開中', (i + 1) / meta.frames.length);
-  }
+    return { blob: new Blob([data], { type }), delay: f.delay };
+  });
+  const first = await createImageBitmap(frames[0].blob);
+  frames.width = first.width;
+  frames.height = first.height;
+  first.close();
   return frames;
+}
+
+async function drawFrame(ctx, frame, width, height) {
+  const bitmap = await createImageBitmap(frame.blob);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, width, height);
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
 }
 
 // ---------- 変換 ----------
@@ -110,7 +120,7 @@ export function canEncodeMp4() {
 
 export async function encodeMp4(frames, onProgress) {
   if (!canEncodeMp4()) throw new Error('このブラウザは MP4 変換（WebCodecs）に対応していません。GIF をお試しください');
-  const { width: w0, height: h0 } = frames[0].bitmap;
+  const { width: w0, height: h0 } = frames;
   const width = w0 & ~1, height = h0 & ~1; // H.264 は偶数サイズが必要
   const config = await pickAvcCodec(width, height);
   if (!config) throw new Error('このブラウザでは H.264 エンコードが使えません。GIF をお試しください');
@@ -134,17 +144,15 @@ export async function encodeMp4(frames, onProgress) {
   let sinceKey = Infinity;
   for (let i = 0; i < frames.length; i++) {
     if (encodeError) throw encodeError;
-    const { bitmap, delay } = frames[i];
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, width, height);
-    ctx.drawImage(bitmap, 0, 0, width, height);
+    const { delay } = frames[i];
+    await drawFrame(ctx, frames[i], width, height);
     const frame = new VideoFrame(canvas, { timestamp: t * 1000, duration: delay * 1000 });
     const keyFrame = sinceKey >= 2000;
     encoder.encode(frame, { keyFrame });
     frame.close();
     sinceKey = keyFrame ? delay : sinceKey + delay;
     t += delay;
-    while (encoder.encodeQueueSize > 4) await new Promise((r) => setTimeout(r, 5));
+    while (encoder.encodeQueueSize > 2) await new Promise((r) => setTimeout(r, 5));
     onProgress('MP4 変換中', (i + 1) / frames.length);
   }
   await encoder.flush();
@@ -155,17 +163,15 @@ export async function encodeMp4(frames, onProgress) {
 }
 
 export async function encodeGif(frames, onProgress) {
-  const { width: w0, height: h0 } = frames[0].bitmap;
+  const { width: w0, height: h0 } = frames;
   const scale = Math.min(1, GIF_MAX_SIDE / Math.max(w0, h0));
   const width = Math.round(w0 * scale), height = Math.round(h0 * scale);
   const canvas = new OffscreenCanvas(width, height);
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   const gif = GIFEncoder();
   for (let i = 0; i < frames.length; i++) {
-    const { bitmap, delay } = frames[i];
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, width, height);
-    ctx.drawImage(bitmap, 0, 0, width, height);
+    const { delay } = frames[i];
+    await drawFrame(ctx, frames[i], width, height);
     const { data } = ctx.getImageData(0, 0, width, height);
     const palette = quantize(data, 256);
     const index = applyPalette(data, palette);
@@ -277,7 +283,6 @@ async function convert(fmt) {
     const meta = await fetchMeta(id);
     const frames = await loadFrames(meta, onProgress);
     const blob = fmt === 'mp4' ? await encodeMp4(frames, onProgress) : await encodeGif(frames, onProgress);
-    frames.forEach((f) => f.bitmap.close());
     pending = { blob, filename: `pixiv_${id}.${fmt}` };
     const size = blob.size >= 1024 * 1024 ? `${(blob.size / 1024 / 1024).toFixed(1)} MB` : `${Math.ceil(blob.size / 1024)} KB`;
     ui.setStatus(`完了（${size}）`, 1);
