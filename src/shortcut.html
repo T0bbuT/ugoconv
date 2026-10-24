@@ -20,6 +20,7 @@
   b { color: var(--accent); }
   .btn { display: inline-block; background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 10px 20px; font-size: 1rem; font-weight: 600; }
   .note { color: var(--muted); font-size: .9rem; }
+  code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .9em; word-break: break-all; }
   pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: .85rem; line-height: 1.6; overflow-x: auto; }
 </style>
 </head>
@@ -41,6 +42,18 @@
       <li>アクション <b>Web ページで JavaScript を実行</b> を追加。中の見本コードを全部消して、1 でコピーしたコードを貼り付ける</li>
     </ol>
     <p class="note">「Web ページで JavaScript を実行」が動かない場合は、設定 → アプリ → ショートカット → 詳細 → <b>スクリプトの実行を許可</b> をオンにしてください。</p>
+  </section>
+
+  <section>
+    <h2>（任意）pixiv アプリから使うためのショートカット</h2>
+    <p class="note">pixiv アプリの中ではコードを動かせないので、まず Safari で作品を開くためのショートカットを別に作ります。</p>
+    <ol>
+      <li>新しいショートカットを作り、名前を <b>Safariで開く</b> にする。<b>共有シートに表示</b> をオンにし、受け取る種類を <b>URL</b> と <b>テキスト</b> にする</li>
+      <li>アクション <b>テキストを照合</b> を追加。パターンに <code>(?&lt;=artworks/)\d+</code>、対象に「ショートカットの入力」</li>
+      <li>アクション <b>テキスト</b> を追加し、<code>x-safari-https://www.pixiv.net/artworks/</code> と入力して、続けてキーボード上の候補から「一致」を差し込み、最後に <code>#ugoconv=mp4</code> と入力する（余計なスペースが入らないように注意。Userscripts を入れている人は、Safari で開いた時点で自動変換が始まります）</li>
+      <li>アクション <b>URL を開く</b> を追加し、開く対象を「テキスト」にする</li>
+    </ol>
+    <p>使い方: pixiv アプリの共有 → <b>Safariで開く</b> → Safari で開いたら、Safari の共有 → <b>うごイラ変換</b>。</p>
   </section>
 
   <section>
