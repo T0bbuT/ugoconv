@@ -8,7 +8,7 @@ If you want to offset all timestamps of a track such that the first one is zero,
 .btn:disabled { opacity: .5; cursor: default; }
 .btn.sub { background: #fff; color: #333; }
 .panel { position: absolute; right: 0; bottom: 52px; width: 260px; padding: 14px; border-radius: 12px; background: #fff; color: #222; box-shadow: 0 4px 20px rgba(0,0,0,.3); }
-.panel[hidden] { display: none; }
+.panel[hidden], .row[hidden] { display: none; }
 .row { display: flex; gap: 8px; margin-top: 10px; }
 .row .btn { flex: 1; padding: 10px 8px; }
 .status { min-height: 1.4em; font-size: 13px; color: #555; }
