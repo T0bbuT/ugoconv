@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-const VERSION = '0.3.0';
+const VERSION = '0.3.1';
 mkdirSync('docs', { recursive: true });
 const opts = { bundle: true, minify: true, format: 'iife', target: ['safari16', 'chrome100', 'firefox115'], write: false, legalComments: 'none', define: { __VERSION__: JSON.stringify(VERSION) } };
 const us = (await build({ ...opts, entryPoints: ['src/userscript.js'] })).outputFiles[0].text;
@@ -30,7 +30,7 @@ writeFileSync('docs/bookmarklet.js', bm);
 const bmLoader = 'javascript:' + readFileSync('src/bookmarklet-loader.js', 'utf8').split('\n').filter((l) => l && !l.startsWith('//')).join('').replace(/[%#]/g, encodeURIComponent);
 writeFileSync('docs/bookmarklet-loader.txt', bmLoader);
 console.log('userscript', (header + us).length, 'bookmarklet', bookmarklet.length);
-const html = readFileSync('src/index.html', 'utf8').replace('__BOOKMARKLET__', () => JSON.stringify(bookmarklet).replace(/<\//g, '<\\/'));
+const html = readFileSync('src/index.html', 'utf8').replace('__BOOKMARKLET__', () => JSON.stringify(bmLoader).replace(/<\//g, '<\\/'));
 writeFileSync('docs/index.html', html);
 const check = readFileSync('src/shortcut-check.js', 'utf8').split('\n').filter((l) => l && !l.startsWith('//')).join('');
 const sc = (await build({ ...opts, entryPoints: ['src/shortcut.js'] })).outputFiles[0].text.trim();
