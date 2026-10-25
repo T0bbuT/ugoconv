@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-const VERSION = '0.2.2';
+const VERSION = '0.3.0';
 mkdirSync('docs', { recursive: true });
 const opts = { bundle: true, minify: true, format: 'iife', target: ['safari16', 'chrome100', 'firefox115'], write: false, legalComments: 'none', define: { __VERSION__: JSON.stringify(VERSION) } };
 const us = (await build({ ...opts, entryPoints: ['src/userscript.js'] })).outputFiles[0].text;
@@ -34,5 +34,9 @@ const check = readFileSync('src/shortcut-check.js', 'utf8').split('\n').filter((
 const sc = (await build({ ...opts, entryPoints: ['src/shortcut.js'] })).outputFiles[0].text.trim();
 writeFileSync('docs/shortcut.js', sc);
 writeFileSync('docs/shortcut.html', readFileSync('src/shortcut.html', 'utf8').replace('__SHORTCUT_JS__', () => JSON.stringify(sc).replace(/<\//g, '<\\/')).replace('__CHECK_JS__', () => JSON.stringify(check)).replace('__VERSION__', VERSION));
+const remote = (await build({ ...opts, entryPoints: ['src/shortcut-remote.js'] })).outputFiles[0].text.trim();
+writeFileSync('docs/shortcut-remote.js', remote);
+const loader = readFileSync('src/shortcut-loader.js', 'utf8').split('\n').filter((l) => l && !l.startsWith('//')).map((l) => l.trim()).join('');
+writeFileSync('docs/shortcut-loader.js', loader);
 writeFileSync('docs/version.json', JSON.stringify({ version: VERSION }) + '\n');
 console.log('shortcut', sc.length);

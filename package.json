@@ -1,10 +1,10 @@
 {
   "name": "ugoconv",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "pixiv のうごイラを端末内で MP4 / GIF に変換するユーザースクリプト",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node test/run.cjs user mp4 yes && node test/run.cjs user gif yes && node test/run-mobile.cjs user mp4 yes && node test/run-shortcut.cjs && node test/run-update.cjs"
+    "test": "node test/run.cjs user mp4 yes && node test/run.cjs user gif yes && node test/run-mobile.cjs user mp4 yes && node test/run-shortcut.cjs && node test/run-update.cjs && node test/run-loader.cjs"
   },
   "dependencies": {
     "esbuild": "^0.28.2",
