@@ -188,8 +188,8 @@ export async function encodeGif(frames, onProgress) {
 async function saveBlob(blob, filename) {
   const file = new File([blob], filename, { type: blob.type });
   const isTouch = matchMedia('(pointer: coarse)').matches;
-  // スマホは共有シート経由（「ビデオを保存」で写真アプリへ）、PC は通常のダウンロード
-  if (isTouch && navigator.canShare?.({ files: [file] })) {
+  // iPhone は共有シート経由（「ビデオを保存」で写真アプリへ）。Android の共有先には「保存」が無いので PC と同じくダウンロード
+  if (isTouch && !/Android/i.test(navigator.userAgent) && navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({ files: [file] });
       return;
