@@ -32,12 +32,14 @@
   <section>
     <h2>できあがったものを使う</h2>
     <p><a class="btn" href="https://www.icloud.com/shortcuts/689099265fa2414d8d63b6ad05b49698">ショートカットを追加</a></p>
+    <p class="note">このショートカットは、実行のたびに <a href="https://github.com/T0bbuT/ugoconv">GitHub で公開しているコード</a> の最新版を GitHub Pages から読み込んで動きます。利用者のデータをどこかに送ることはありません。</p>
     <p class="note">以下は自分で作る場合の手順です。</p>
   </section>
 
   <section>
     <h2>1. コードをコピー</h2>
-    <p><button class="btn" data-copy="start">変換コードをコピー</button> <span class="note" id="copied"></span></p>
+    <p><button class="btn" data-copy="start">読み込み用コードをコピー</button> <span class="note" id="copied"></span></p>
+    <p class="note">数行の「読み込み係」です。実行のたびに GitHub Pages から最新の変換コードを読み込むので、更新があってもショートカットを入れ直す必要はありません。</p>
   </section>
 
   <section>
@@ -84,7 +86,7 @@ If文の終了</pre>
   </section>
 </main>
 <script>
-  const CODES = { start: __SHORTCUT_JS__ };
+  const CODES = { start: __LOADER_JS__ };
   document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
     const out = document.getElementById('copied');
     const code = CODES[btn.dataset.copy];
