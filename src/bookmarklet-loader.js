@@ -1,0 +1,2 @@
+// Android の Chrome などで使う短いブックマークレット。実行のたびに最新のブックマークレット本体を GitHub Pages から読み込む
+(function () { fetch('https://t0bbut.github.io/ugoconv/bookmarklet.js?t=' + Date.now(), { cache: 'no-store', credentials: 'omit' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); }).then(function (c) { (0, eval)(c); }).catch(function (e) { alert('うごイラ変換: 読み込みに失敗しました（' + e.message + '）'); }); })();

@@ -27,6 +27,8 @@ const bm = (await build({ ...opts, entryPoints: ['src/bookmarklet.js'] })).outpu
 const bookmarklet = 'javascript:' + bm.replace(/[%#\n\r]/g, encodeURIComponent);
 writeFileSync('docs/bookmarklet.txt', bookmarklet);
 writeFileSync('docs/bookmarklet.js', bm);
+const bmLoader = 'javascript:' + readFileSync('src/bookmarklet-loader.js', 'utf8').split('\n').filter((l) => l && !l.startsWith('//')).join('').replace(/[%#]/g, encodeURIComponent);
+writeFileSync('docs/bookmarklet-loader.txt', bmLoader);
 console.log('userscript', (header + us).length, 'bookmarklet', bookmarklet.length);
 const html = readFileSync('src/index.html', 'utf8').replace('__BOOKMARKLET__', () => JSON.stringify(bookmarklet).replace(/<\//g, '<\\/'));
 writeFileSync('docs/index.html', html);
