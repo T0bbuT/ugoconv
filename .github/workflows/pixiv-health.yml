@@ -1,0 +1,35 @@
+# pixiv 側の仕様変更の見張り。毎日 1 回、実際の pixiv で取得の前提が崩れていないか確かめる。
+# 失敗すると GitHub からメールが届く（このファイルを最後に変更した人宛て）。
+# Actions タブの「Run workflow」から手動でも動かせる。
+name: pixiv health check
+
+on:
+  schedule:
+    - cron: '17 0 * * *' # 毎日 9:17 (日本時間)
+  pull_request: # 見張り自体を直したときに、その場で試せるように
+    paths:
+      - test/pixiv-health.mjs
+      - .github/workflows/pixiv-health.yml
+  workflow_dispatch:
+    inputs:
+      ugoira_id:
+        description: '確かめるうごイラの作品ID（空なら既定の作品）'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node test/pixiv-health.mjs
+        env:
+          UGOIRA_ID: ${{ inputs.ugoira_id || vars.UGOIRA_ID }}
