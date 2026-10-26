@@ -322,20 +322,22 @@ async function convert(fmt, { forShortcut = false } = {}) {
 
 // ---------- 不具合の報告 ----------
 // 変換に失敗したら、報告フォーム(Tally)へのリンクを出す。送る人はアカウント不要。
-// 版数・端末・エラー内容・作品IDはフォームの隠し項目に入れておく
+// 配布ページからも同じフォームを開く(ご意見・感想も兼ねる)。ここからは種類を「不具合」にし、
+// 版数・端末・エラー内容・作品IDをフォームの隠し項目に入れておく
 
-const REPORT_URL = ''; // 例: https://tally.so/r/xxxx 。空なら報告リンクを出さない
+const REPORT_URL = 'https://tally.so/r/yXX4a0'; // 空なら報告リンクを出さない
 let launchedVia = 'userscript';
 
 function showReport(id, e) {
   if (!REPORT_URL) return;
   const params = new URLSearchParams({
+    type: '不具合',
     ver: `${__VERSION__} (${launchedVia})`,
     ua: navigator.userAgent,
     err: String(e?.message || e).slice(0, 500),
     id: id || '',
   });
-  ui.report.querySelector('a').href = `${REPORT_URL}?${params}`;
+  ui.report.querySelector('a').href = `${REPORT_URL}?${String(params).replace(/\+/g, '%20')}`; // + を空白と読まない受け手もあるので %20 に
   ui.report.hidden = false;
 }
 
