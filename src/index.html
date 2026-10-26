@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>うごイラ変換（試作）</title>
 <style>
-  :root { --bg: #f7f8fa; --fg: #1d1f23; --muted: #5b616b; --card: #fff; --line: #e3e6eb; --accent: #0096fa; }
+  :root { --bg: #f7f8fa; --fg: #1d1f23; --muted: #5b616b; --card: #fff; --line: #e3e6eb; --accent: #0096fa; --mark: #ff2d55; }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #15171a; --fg: #e8eaed; --muted: #a0a6ae; --card: #1f2226; --line: #33373d; --accent: #3fb0ff; }
+    :root { --bg: #15171a; --fg: #e8eaed; --muted: #a0a6ae; --card: #1f2226; --line: #33373d; --accent: #3fb0ff; --mark: #ff5277; }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
   h1 { font-size: 1.6rem; margin: 0 0 4px; }
   h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+  h3 { font-size: 1.1rem; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
   p.lead { color: var(--muted); margin-top: 0; }
   section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 12px; margin-top: 16px; }
   ol { padding-left: 1.4em; }
@@ -21,86 +22,145 @@
   .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; border: 0; border-radius: 999px; padding: 8px 18px; font-size: 1rem; cursor: pointer; }
   textarea { width: 100%; height: 6em; font: 12px monospace; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
   .note { color: var(--muted); font-size: .9rem; }
+  /* 端末の切り替え */
+  .tabs { display: flex; gap: 8px; position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 5; }
+  .tabs button { flex: 1; font: inherit; font-weight: 700; padding: 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .panel { background: none; border: 0; padding: 0; margin-top: 0; }
+  /* 画像付きの手順: 狭い画面では文→画像の縦並び、広い画面では横並び */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .step { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 18px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .step.text { grid-template-columns: minmax(0, 1fr); }
+  .step figure { margin: 0; }
+  .step img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
+  .step .txt { min-width: 0; }
+  .step .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; }
+  .step .head { font-size: 1.05rem; font-weight: 700; margin: 6px 0 4px; }
+  .step .note { margin: 0; }
+  .step .btn { margin: 4px 0 8px; }
+  .callout { background: color-mix(in srgb, var(--mark) 10%, var(--card)); border: 2px solid var(--mark); border-radius: 12px; padding: 12px 16px; }
+  .callout .head { color: var(--mark); font-weight: 700; margin: 0 0 4px; }
+  .callout .note, .note b { color: var(--fg); }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; margin-top: 16px; }
+  summary { font-weight: 700; cursor: pointer; }
+  @media (max-width: 560px) {
+    .step { grid-template-columns: minmax(0, 1fr); }
+    .step .txt { order: -1; }
+    .step figure { max-width: 300px; width: 100%; margin: 0 auto; }
+  }
 </style>
 </head>
 <body>
 <main>
   <h1>うごイラ変換（試作）</h1>
   <p class="lead">pixiv のうごイラを、あなたの端末の中で MP4 / GIF に変換して保存します。変換にサーバーを使わないので、運営費がかかりません。ブラウザで pixiv にログインしていれば R-18 作品も変換できます。</p>
+  <p class="note">使う端末を選んでください。画像の赤い枠のところをタップします。機種や OS のバージョンによって、見た目が少し違うことがあります。</p>
 
-  <section>
-    <h2>使い方</h2>
-    <p>pixiv の作品ページの右下に出る「うごイラ変換」ボタンを押して、MP4 か GIF を選びます。スマホは変換が終わったら「保存する」を押してください（iPhone は「ビデオを保存」で写真アプリに、Android は「ダウンロード」フォルダに入ります）。</p>
-    <p class="note">最初に一度、使うブラウザで <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておいてください（アプリのログインとは別です）。</p>
-  </section>
+  <div class="tabs" role="tablist">
+    <button id="tab-iphone" role="tab" aria-controls="iphone">iPhone</button>
+    <button id="tab-android" role="tab" aria-controls="android">Android</button>
+    <button id="tab-pc" role="tab" aria-controls="pc">PC</button>
+  </div>
 
-  <section>
-    <h2>PC（Chrome / Edge / Firefox）</h2>
-    <ol>
-      <li>拡張機能 Tampermonkey か Violentmonkey を入れる</li>
-      <li><a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a> を押してインストール</li>
+  <section class="panel" id="iphone" role="tabpanel" aria-labelledby="tab-iphone">
+    <h2>iPhone（ショートカット 1 つだけ）</h2>
+    <h3>準備（最初の 1 回だけ）</h3>
+    <ol class="steps">
+      <li class="step text"><div class="txt"><span class="num">1</span><p class="head">Safari で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく</p><p class="note">R-18 の変換に必要です。pixiv アプリのログインとは別です。</p></div></li>
+      <li class="step text"><div class="txt"><span class="num">2</span><p class="head">「ショートカットを追加」を押す</p><p class="note"><a class="btn" href="https://www.icloud.com/shortcuts/dae74dbe309644df936f919d35fafde4">ショートカットを追加</a><br>iPhone の Safari でこのページを開いて押してください。</p></div></li>
+      <li class="step"><figure><img src="img/i-add.jpg" alt="もう一度「ショートカットを追加」を押す" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">もう一度「ショートカットを追加」を押す</p><p class="note">ショートカットアプリに追加されます。</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-share.jpg" alt="ショートカットアプリで ①「うごイラ変換」を長押し → ②「共有」" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">ショートカットアプリで ①「うごイラ変換」を長押し → ②「共有」</p><p class="note">ここからは、うごイラ変換を共有シートの 1 段目に出すおすすめ設定です。追加した直後にそのままやっておくと、あとで探さずに済みます。</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-more.jpg" alt="「表示を増やす」" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">「表示を増やす」</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-editbtn.jpg" alt="一番下の「アクションを編集」" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">一番下の「アクションを編集」</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-plus.jpg" alt="① うごイラ変換の緑の ＋ → ② 右上の ✓" loading="lazy"></figure><div class="txt"><span class="num">7</span><p class="head">① うごイラ変換の緑の ＋ → ② 右上の ✓</p><p class="note">「よく使う項目」に入ります。</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-done.jpg" alt="1 段目に「うごイラ変換」が出れば完了" loading="lazy"></figure><div class="txt"><span class="num">8</span><p class="head">1 段目に「うごイラ変換」が出れば完了</p><p class="note">pixiv アプリや Safari で共有を開いたときも、1 段目に出るようになります。ほかに「よく使う項目」に入れているものがあると、その後ろに並ぶことがあります。</p></div></li>
     </ol>
-  </section>
-
-  <section>
-    <h2>iPhone（おすすめ: ショートカット 1 つだけ）</h2>
-    <ol>
-      <li><a class="btn" href="https://www.icloud.com/shortcuts/dae74dbe309644df936f919d35fafde4">ショートカットを追加</a> を押して「ショートカットを追加」</li>
-      <li>Safari で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく（R-18 の変換に必要。アプリのログインとは別です）</li>
+    <h3>pixiv アプリから使うとき</h3>
+    <ol class="steps">
+      <li class="callout"><p class="head">pixiv アプリからは、ショートカットを 2 回使います</p><p class="note">1 回目は作品を Safari で開くだけで、まだ変換は始まりません。Safari で開いたら、もう一度「うごイラ変換」を押すと変換が始まります。</p></li>
+      <li class="step"><figure><img src="img/i-appmenu.jpg" alt="作品の「…」→「シェア」" loading="lazy"></figure><div class="txt"><span class="num">1</span><p class="head">作品の「…」→「シェア」</p></div></li>
+      <li class="step"><figure><img src="img/i-fav.jpg" alt="「うごイラ変換」をタップ（1 回目）" loading="lazy"></figure><div class="txt"><span class="num">2</span><p class="head">「うごイラ変換」をタップ（1 回目）</p><p class="note"><b>まだ変換は始まりません。</b>Safari で作品が開くので、下の「Safari で使うとき」に進んでください。</p></div></li>
+      <li class="step"><figure><img src="img/i-allow-send.jpg" alt="初めてのときだけ：「常に許可」" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">初めてのときだけ：「常に許可」</p><p class="note">pixiv アプリから Safari に作品を渡してよいかの確認です。「常に許可」にしておくと次から出ません。</p></div></li>
     </ol>
-    <p><b>Safari で見ている時:</b> Safari の共有メニュー（アドレスバー左のアイコン →「共有」）→ ショートカットを選ぶ → 変換が終わったら「保存する」→「ビデオを保存」</p>
-    <p><b>pixiv アプリで見ている時:</b> 作品の共有 → ショートカットを選ぶ → Safari で作品が開くので、上と同じ手順</p>
-    <p class="note">初回は pixiv での実行を「許可」してください。動かない場合は 設定 → アプリ → ショートカット → 詳細 →「スクリプトの実行を許可」をオンに。中身や自分で作る手順は <a href="shortcut.html">こちら</a>。</p>
+    <h3>Safari で使うとき</h3>
+    <ol class="steps">
+      <li class="step"><figure><img src="img/i-safaripage.jpg" alt="アドレスバー左のボタンをタップ" loading="lazy"></figure><div class="txt"><span class="num">1</span><p class="head">アドレスバー左のボタンをタップ</p></div></li>
+      <li class="step"><figure><img src="img/i-safarimenu.jpg" alt="「共有」をタップ" loading="lazy"></figure><div class="txt"><span class="num">2</span><p class="head">「共有」をタップ</p></div></li>
+      <li class="step"><figure><img src="img/i-safarifav.jpg" alt="「うごイラ変換」をタップ" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">「うごイラ変換」をタップ</p><p class="note">変換が始まります。pixiv アプリから来た場合は、これが 2 回目です。</p></div></li>
+      <li class="step"><figure><img src="img/i-allow-pixiv.jpg" alt="初めてのときだけ：「許可」" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">初めてのときだけ：「許可」</p><p class="note">パスワードなどの読み取りについて書かれていますが、これはショートカットがウェブページを扱うときに Apple が必ず出す決まった文言です。うごイラ変換は、作品のコマ画像を読み込んで動画にするためだけにページを使います。</p></div></li>
+      <li class="step"><figure><img src="img/i-panel.jpg" alt="終わったら「保存する」" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">終わったら「保存する」</p></div></li>
+      <li class="step"><figure><img src="img/i-video.jpg" alt="「ビデオを保存」" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">「ビデオを保存」</p><p class="note">写真アプリに入ります。</p></div></li>
+    </ol>
+    <p class="note">動かない場合は 設定 → アプリ → ショートカット → 詳細 →「スクリプトの実行を許可」をオンにしてください。中身や自分で作る手順は <a href="shortcut.html">こちら</a>。</p>
     <p class="note">ショートカットは実行のたびに、GitHub で公開しているコードの最新版を読み込んで動くので、更新のたびに入れ直す必要はありません。</p>
+    <details>
+      <summary>別の方法: Userscripts アプリ</summary>
+      <p class="note">準備は多めですが、ボタン 1 つで変換でき、GIF も選べます。</p>
+      <ol>
+        <li>App Store で無料の「Userscripts」アプリを入れ、設定 → アプリ → Safari → 機能拡張 で Userscripts をオンにする</li>
+        <li>Safari で pixiv を開き、アドレスバーの「ぁあ」（または拡張機能のアイコン）→ Userscripts →「常に許可」で、pixiv に対してだけ許可する</li>
+        <li>Safari でこのページの <a href="ugoira-converter.user.js">スクリプト</a> を開き、アドレスバーの「ぁあ」→ Userscripts からインストール</li>
+      </ol>
+    </details>
   </section>
 
-  <section>
-    <h2>iPhone（別の方法: Userscripts アプリ）</h2>
-    <p class="note">準備は多めですが、ボタン 1 つで変換でき、GIF も選べます。</p>
-    <ol>
-      <li>App Store で無料の「Userscripts」アプリを入れ、設定 → アプリ → Safari → 機能拡張 で Userscripts をオンにする</li>
-      <li>Safari で pixiv を開き、アドレスバーの「ぁあ」（または拡張機能のアイコン）→ Userscripts →「常に許可」で、pixiv に対してだけ許可する</li>
-      <li>Safari でこのページの <a href="ugoira-converter.user.js">スクリプト</a> を開き、アドレスバーの「ぁあ」→ Userscripts からインストール</li>
+  <section class="panel" id="android" role="tabpanel" aria-labelledby="tab-android">
+    <h2>Android（Chrome にブックマークを 1 つ）</h2>
+    <h3>準備（最初の 1 回だけ）</h3>
+    <ol class="steps">
+      <li class="step text"><div class="txt"><span class="num">1</span><p class="head">Chrome で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく</p><p class="note">R-18 の変換に必要です。pixiv アプリのログインとは別です。</p></div></li>
+      <li class="step text"><div class="txt"><span class="num">2</span><p class="head">「コードをコピー」を押す</p><p class="note"><button class="btn" id="copy">コードをコピー</button> <span id="copied"></span><br>Chrome でこのページを開いて押してください。「コピーしました」と出れば OK。</p></div></li>
+      <li class="step"><figure><img src="img/a-star.jpg" alt="右上の「︙」→「☆」" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">右上の「︙」→「☆」</p><p class="note">このページをブックマークに入れます。</p></div></li>
+      <li class="step"><figure><img src="img/a-edit.jpg" alt="画面の下に出るバーをタップ" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">画面の下に出るバーをタップ</p><p class="note">ブックマークの編集画面が開きます。</p></div></li>
+      <li class="step"><figure><img src="img/a-fields.jpg" alt="名前と URL を書き換える" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">名前と URL を書き換える</p><p class="note">① 名前を「うごへん」にする　② URL を全部消して、コピーしたコードを貼り付ける</p></div></li>
+      <li class="step"><figure><img src="img/a-back.jpg" alt="左上の「←」で保存" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">左上の「←」で保存</p><p class="note">これで準備は終わりです。</p></div></li>
     </ol>
-  </section>
-
-  <section>
-    <h2>Android（おすすめ: Chrome にブックマークを 1 つ）</h2>
-    <p><b>準備（最初の 1 回だけ）</b></p>
-    <ol>
-      <li>Chrome で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく（R-18 の変換に必要。アプリのログインとは別です）</li>
-      <li>Chrome でこのページを開き、<button class="btn" id="copy">コードをコピー</button> を押す <span class="note" id="copied"></span></li>
-      <li>右上の「︙」→「☆」でこのページをブックマーク → 画面下に出る「編集」を押す</li>
-      <li>名前を <code>うごへん</code> に、URL 欄を全部消してコピーしたコードを貼り付け → 左上の「←」で保存 <span class="note">（ひらがなだけの珍しい名前にしておくと、変換なしで数文字打つだけで候補の上の方に出ます）</span></li>
+    <h3>pixiv アプリから使うとき</h3>
+    <ol class="steps">
+      <li class="step"><figure><img src="img/a-share.jpg" alt="pixiv アプリで ① 共有 → ②「Chrome」" loading="lazy"></figure><div class="txt"><span class="num">1</span><p class="head">pixiv アプリで ① 共有 → ②「Chrome」</p><p class="note">作品が Chrome で開きます。開いたら、下の「Chrome で使うとき」に進んでください。</p></div></li>
     </ol>
-    <p class="note">PC の Chrome に同じ Google アカウントでログインしているなら、PC で下の「うごへん」ボタンをブックマークバーへドラッグするだけでも、スマホの Chrome に同期されます。</p>
-    <p><b>使うとき</b></p>
-    <ol>
-      <li>Chrome で pixiv の作品ページを開く（pixiv アプリからは 作品の共有ボタン →「Chrome」で一発で開けます）</li>
-      <li>アドレスバーに <code>うごへ</code> と入力 → 候補に出る ☆うごへん をタップ</li>
-      <li>MP4 か GIF を選び、変換が終わったら「保存する」。端末の「ダウンロード」フォルダに入り、Google フォトの「デバイス内のフォト」からも見られます</li>
+    <h3>Chrome で使うとき</h3>
+    <ol class="steps">
+      <li class="step"><figure><img src="img/a-open.jpg" alt="Chrome のアドレスバーをタップ" loading="lazy"></figure><div class="txt"><span class="num">1</span><p class="head">Chrome のアドレスバーをタップ</p></div></li>
+      <li class="step"><figure><img src="img/a-type.jpg" alt="①「うごへ」と打つ → ② ☆うごへん をタップ" loading="lazy"></figure><div class="txt"><span class="num">2</span><p class="head">①「うごへ」と打つ → ② ☆うごへん をタップ</p><p class="note">☆ の付いた候補は一番下に出ます。キーボードに隠れて見えないときは、キーボードを閉じてください。</p></div></li>
+      <li class="step"><figure><img src="img/a-format.jpg" alt="MP4 か GIF を選ぶ" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">MP4 か GIF を選ぶ</p><p class="note">迷ったら MP4 がおすすめ（軽くてきれい）。</p></div></li>
+      <li class="step"><figure><img src="img/a-save.jpg" alt="「保存する」を押す" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">「保存する」を押す</p><p class="note">端末の「ダウンロード」フォルダに入ります。</p></div></li>
     </ol>
+    <p class="note">ブックマークの名前は、ひらがなだけの珍しい名前にしておくと、変換なしで数文字打つだけで候補の上の方に出ます。保存した動画は Google フォトの「デバイス内のフォト」からも見られます。</p>
+    <p class="note">PC の Chrome に同じ Google アカウントでログインしているなら、PC でページ下の「うごへん」ボタンをブックマークバーへドラッグするだけでも、スマホの Chrome に同期されます。</p>
     <p class="note">ブックマークは実行のたびに最新版のコードを読み込むので、更新のたびに入れ直す必要はありません。</p>
+    <details>
+      <summary>別の方法: Firefox ＋ Violentmonkey</summary>
+      <p class="note">作品ページに変換ボタンが常に出ます。</p>
+      <ol>
+        <li>Firefox を入れ、アドオンから Violentmonkey を追加する</li>
+        <li>Firefox でこのページの <a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a></li>
+        <li>Firefox で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>し、作品ページ右下のボタンから変換</li>
+      </ol>
+    </details>
   </section>
 
-  <section>
-    <h2>Android（別の方法: Firefox ＋ Violentmonkey）</h2>
-    <p class="note">作品ページに変換ボタンが常に出ます。</p>
-    <ol>
-      <li>Firefox を入れ、アドオンから Violentmonkey を追加する</li>
-      <li>Firefox でこのページの <a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a></li>
-      <li>Firefox で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>し、作品ページ右下のボタンから変換</li>
-    </ol>
+  <section class="panel" id="pc" role="tabpanel" aria-labelledby="tab-pc">
+    <h2>PC（Chrome / Edge / Firefox）</h2>
+    <section>
+      <ol>
+        <li>拡張機能 Tampermonkey か Violentmonkey を入れる</li>
+        <li><a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a> を押してインストール</li>
+        <li>使うブラウザで <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく（R-18 の変換に必要です）</li>
+      </ol>
+      <p>pixiv の作品ページの右下に出る「うごイラ変換」ボタンを押して、MP4 か GIF を選びます。</p>
+    </section>
   </section>
 
+  <h2>そのほかのブラウザ（ブックマークレット）</h2>
   <section>
-    <h2>そのほかのブラウザ（ブックマークレット）</h2>
     <p>下のコードを URL にしたブックマークを作り、pixiv の作品ページで実行します。</p>
     <p><a class="btn" id="bm-link" href="#">うごへん</a> <span class="note">PC はこのボタンをブックマークバーへドラッグで登録できます</span></p>
     <textarea id="bm" readonly></textarea>
   </section>
 
   <p class="note">この試作は pixiv（ピクシブ株式会社）とは無関係です。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p>
+  <p class="note">手順の画像では、作品・作者名・作品名を見本に置き換え、ほかのアプリ名などはぼかしています。</p>
 </main>
 <script>
   const BOOKMARKLET = __BOOKMARKLET__;
@@ -110,8 +170,21 @@
   document.getElementById('copy').addEventListener('click', async () => {
     const out = document.getElementById('copied');
     try { await navigator.clipboard.writeText(BOOKMARKLET); out.textContent = 'コピーしました'; }
-    catch { document.getElementById('bm').select(); out.textContent = '下の「そのほかのブラウザ」の欄のコードを長押しでコピーしてください'; }
+    catch { document.getElementById('bm').select(); out.textContent = 'ページ下の「そのほかのブラウザ」の欄のコードを長押しでコピーしてください'; }
   });
+  // 端末の切り替え: #iphone などの指定 → なければ使っている端末に合わせる
+  const tabs = [...document.querySelectorAll('[role=tab]')];
+  function show(id) {
+    for (const t of tabs) {
+      const on = t.getAttribute('aria-controls') === id;
+      t.setAttribute('aria-selected', on);
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    }
+  }
+  for (const t of tabs) t.addEventListener('click', () => { const id = t.getAttribute('aria-controls'); show(id); history.replaceState(null, '', '#' + id); });
+  const ua = navigator.userAgent;
+  const guess = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iphone' : /Android/.test(ua) ? 'android' : 'pc';
+  show(['iphone', 'android', 'pc'].includes(location.hash.slice(1)) ? location.hash.slice(1) : guess);
 </script>
 </body>
 </html>
