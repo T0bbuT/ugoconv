@@ -227,7 +227,9 @@ const CSS = `
 .title small { font-weight: 400; color: #999; }
 .update { margin-top: 10px; font-size: 13px; }
 .update[hidden] { display: none; }
-.update a { color: #0096fa; font-weight: 600; }
+.update a, .report a { color: #0096fa; font-weight: 600; }
+.report { margin-top: 8px; font-size: 13px; }
+.report[hidden] { display: none; }
 .toggle.has-update::after { content: ''; display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: #ff5252; vertical-align: middle; }
 `;
 
@@ -247,6 +249,7 @@ function createUI() {
           <button class="btn" data-fmt="gif">GIF</button>
         </div>
         <div class="row save-row" hidden><button class="btn save">保存する</button></div>
+        <div class="report" hidden><a target="_blank" rel="noopener">うまくいかないことを報告する</a></div>
         <div class="update" hidden><a target="_blank" rel="noopener"></a></div>
       </div>
       <button class="btn toggle">うごイラ変換</button>
@@ -262,6 +265,7 @@ function createUI() {
     saveBtn: $('.save'),
     toggle: $('.toggle'),
     update: $('.update'),
+    report: $('.report'),
     setStatus(text, p, isError) {
       this.status.textContent = text;
       this.status.classList.toggle('err', !!isError);
@@ -288,6 +292,7 @@ async function convert(fmt, { forShortcut = false } = {}) {
   busy = true;
   pending = null;
   ui.saveRow.hidden = true;
+  ui.report.hidden = true;
   ui.setBusy(true);
   const onProgress = (label, p) => ui.setStatus(`${label}… ${Math.round(p * 100)}%`, p);
   try {
@@ -306,12 +311,32 @@ async function convert(fmt, { forShortcut = false } = {}) {
   } catch (e) {
     console.error('[ugoconv]', e);
     ui.setStatus(e.message || String(e), 0, true);
+    showReport(id, e);
     if (forShortcut) throw e;
     return null;
   } finally {
     busy = false;
     ui.setBusy(false);
   }
+}
+
+// ---------- 不具合の報告 ----------
+// 変換に失敗したら、報告フォーム(Tally)へのリンクを出す。送る人はアカウント不要。
+// 版数・端末・エラー内容・作品IDはフォームの隠し項目に入れておく
+
+const REPORT_URL = ''; // 例: https://tally.so/r/xxxx 。空なら報告リンクを出さない
+let launchedVia = 'userscript';
+
+function showReport(id, e) {
+  if (!REPORT_URL) return;
+  const params = new URLSearchParams({
+    ver: `${__VERSION__} (${launchedVia})`,
+    ua: navigator.userAgent,
+    err: String(e?.message || e).slice(0, 500),
+    id: id || '',
+  });
+  ui.report.querySelector('a').href = `${REPORT_URL}?${params}`;
+  ui.report.hidden = false;
 }
 
 // 共有ショートカットから #ugoconv=mp4 付きで開かれたかを調べる。
@@ -379,7 +404,8 @@ async function checkUpdate() {
   ui.toggle.classList.add('has-update');
 }
 
-export function start({ autoOpen = false, autoFormat = takeAutoFormat(), updateCheck = false } = {}) {
+export function start({ autoOpen = false, autoFormat = takeAutoFormat(), updateCheck = false, via } = {}) {
+  if (via) launchedVia = via;
   // 同じ版が既に動いていれば開くだけ。古い版が残っていたら(入れ直しで重複した時など)置き換える
   if (window.__ugoconv?.version === __VERSION__) {
     window.__ugoconv.open();
@@ -434,7 +460,7 @@ export function startForShortcut(fmt = 'mp4') {
   if (running && running.id === id && !running.error) return; // 同じ作品の変換中・変換済みならそのまま
   const job = { id, base64: null, error: null };
   window.__ugoconvJob = job;
-  start({ autoOpen: true });
+  start({ autoOpen: true, via: 'shortcut' });
   convert(fmt, { forShortcut: true })
     .then((result) => {
       if (!result) throw new Error('すでに変換中です');
