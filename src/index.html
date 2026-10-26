@@ -3,7 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>うごイラ変換（試作）</title>
+<title>うごへん｜うごイラ変換・コンバーター（MP4 動画・GIF で保存／iPhone・Android・PC）</title>
+<meta name="description" content="うごへんは、pixiv のうごイラを MP4 動画や GIF に変換して保存できる無料のコンバーターです。iPhone・Android・PC 対応。変換はあなたの端末の中で行い、R-18 作品もご自分のログインのまま変換できます。登録不要。">
+<link rel="canonical" href="https://t0bbut.github.io/ugoconv/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230096fa'/%3E%3Cpath d='M36 26v48l40-24z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="うごへん">
+<meta property="og:title" content="うごへん｜うごイラを MP4 動画・GIF に変換して保存">
+<meta property="og:description" content="うごへんは、pixiv のうごイラを MP4 動画や GIF に変換して保存できる無料のコンバーターです。iPhone・Android・PC 対応。変換はあなたの端末の中で行い、R-18 作品もご自分のログインのまま変換できます。登録不要。">
+<meta property="og:url" content="https://t0bbut.github.io/ugoconv/">
+<meta property="og:image" content="https://t0bbut.github.io/ugoconv/img/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"うごへん","alternateName":["ugoconv","うごイラ変換"],"applicationCategory":"MultimediaApplication","operatingSystem":"iOS, Android, Windows, macOS","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"url":"https://t0bbut.github.io/ugoconv/"}</script>
 <style>
   :root { --bg: #f7f8fa; --fg: #1d1f23; --muted: #5b616b; --card: #fff; --line: #e3e6eb; --accent: #0096fa; --mark: #ff2d55; }
   @media (prefers-color-scheme: dark) {
@@ -16,6 +29,14 @@
   h2 { font-size: 1.15rem; margin: 32px 0 8px; }
   h3 { font-size: 1.1rem; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
   p.lead { color: var(--muted); margin-top: 0; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand svg { width: 44px; height: 44px; flex: none; }
+  .sub { font-size: 1rem; color: var(--muted); font-weight: 600; margin: 0 0 12px; }
+  .points { list-style: none; padding: 0; margin: 12px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .points li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; font-size: .92rem; line-height: 1.5; }
+  .points b { display: block; color: var(--accent); }
+  .faq details { margin-top: 8px; }
+  .faq details p { margin: 8px 0 0; }
   section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 12px; margin-top: 16px; }
   ol { padding-left: 1.4em; }
   code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .9em; word-break: break-all; }
@@ -52,8 +73,15 @@
 </head>
 <body>
 <main>
-  <h1>うごイラ変換（試作）</h1>
-  <p class="lead">pixiv のうごイラを、あなたの端末の中で MP4 / GIF に変換して保存します。変換にサーバーを使わないので、運営費がかかりません。ブラウザで pixiv にログインしていれば R-18 作品も変換できます。</p>
+  <h1 class="brand"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0096fa"/><path d="M36 26v48l40-24z" fill="#fff"/></svg>うごへん</h1>
+  <p class="sub">うごイラ変換・コンバーター（MP4 動画 / GIF）</p>
+  <p class="lead">うごへんは、pixiv のうごイラ（うごいら）を MP4 動画や GIF に変換して保存するコンバーターです。変換はあなたの端末の中で行うので、サーバー代がかからず、ずっと無料で続けられます。</p>
+  <ul class="points">
+    <li><b>無料・登録不要</b>広告もありません</li>
+    <li><b>スマホでも使える</b>iPhone・Android・PC</li>
+    <li><b>R-18 作品も OK</b>ご自分の pixiv ログインのまま</li>
+    <li><b>サーバーなし</b>作品やログイン情報を外へ送りません</li>
+  </ul>
   <p class="note">使う端末を選んでください。画像の赤い枠のところをタップします。機種や OS のバージョンによって、見た目が少し違うことがあります。</p>
 
   <div class="tabs" role="tablist">
@@ -159,13 +187,24 @@
     <textarea id="bm" readonly></textarea>
   </section>
 
+  <h2>よくある質問</h2>
+  <section class="faq">
+    <details><summary>うごイラを動画（MP4）にして保存するには？</summary><p>上の手順で準備したあと、作品ページで変換して「MP4」を選びます。iPhone は「写真」アプリ、Android はギャラリーや Google フォトに動画として保存できます。</p></details>
+    <details><summary>GIF にもできますか？</summary><p>できます。変換するときに「GIF」を選んでください。GIF はファイルが大きく、スマホでは時間がかかることがあります。きれいに残したいときは MP4 がおすすめです。</p></details>
+    <details><summary>iPhone でうごイラを保存するには？</summary><p>ショートカットを 1 つ追加するだけです。pixiv アプリや Safari の共有ボタンから「うごイラ変換」を選ぶと、Safari で変換して保存できます。ほかのアプリを入れる必要はありません。</p></details>
+    <details><summary>R-18 の作品も変換できますか？</summary><p>できます。使うブラウザ（iPhone は Safari、Android は Chrome）で pixiv にログインしておけば、そのログインのまま変換します。pixiv アプリのログインとは別なので、最初に一度ブラウザでもログインしてください。</p></details>
+    <details><summary>ログイン情報や作品をどこかに送っていませんか？</summary><p>送っていません。変換はすべてあなたの端末の中で行い、うごへんのサーバーはありません。パスワードを入力する場面もありません。コードはすべて <a href="https://github.com/T0bbuT/ugoconv">GitHub</a> で公開しています。</p></details>
+    <details><summary>お金はかかりますか？</summary><p>かかりません。変換用のサーバーを持たないので運営費がほぼかからず、広告や寄付に頼らずに続けられる作りにしています。</p></details>
+    <details><summary>変換した動画を SNS に載せてもいいですか？</summary><p>作品の著作権は作者にあります。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p></details>
+  </section>
+
   <h2>ご意見・不具合の報告</h2>
   <section>
     <p>うまく動かないとき、こうしてほしいこと、感想などはフォームから送れます。アカウントは要りません。</p>
     <p><a class="btn" href="https://tally.so/r/yXX4a0" target="_blank" rel="noopener">フォームを開く</a></p>
   </section>
 
-  <p class="note">この試作は pixiv（ピクシブ株式会社）とは無関係です。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p>
+  <p class="note">うごへんは pixiv 非公式のツールで、pixiv（ピクシブ株式会社）とは関係ありません。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p>
   <p class="note">コードは <a href="https://github.com/T0bbuT/ugoconv">GitHub</a> で <a href="https://github.com/T0bbuT/ugoconv/blob/main/LICENSE">MIT ライセンス</a>として公開しています。更新が止まったときは、誰でも fork して別の URL で配布してかまいません。</p>
   <p class="note">手順の画像では、作品・作者名・作品名を見本に置き換え、ほかのアプリ名などはぼかしています。</p>
 </main>
