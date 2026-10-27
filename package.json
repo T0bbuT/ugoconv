@@ -1,6 +1,6 @@
 {
-  "name": "ugoconv",
-  "version": "0.3.2",
+  "name": "ugohen",
+  "version": "0.4.0",
   "description": "pixiv のうごイラを端末内で MP4 / GIF に変換するユーザースクリプト",
   "scripts": {
     "build": "node build.mjs",
