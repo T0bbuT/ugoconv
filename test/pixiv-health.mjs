@@ -5,7 +5,7 @@
 import { unzipSync } from 'fflate';
 
 const ID = process.argv[2] || process.env.UGOIRA_ID || '44298467';
-const SITE = 'https://t0bbut.github.io/ugoconv/';
+const SITE = 'https://t0bbut.github.io/ugohen/';
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
 const headers = { 'User-Agent': UA, Referer: 'https://www.pixiv.net/', 'Accept-Language': 'ja' };
 
