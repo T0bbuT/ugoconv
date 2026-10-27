@@ -10,7 +10,7 @@ const dir = __dirname;
     if (url.startsWith('https://www.pixiv.net/artworks/')) return route.fulfill({ contentType: 'text/html', body: '<!doctype html><body></body>' });
     if (url.includes('/ajax/illust/123/ugoira_meta')) return route.fulfill({ contentType: 'application/json', body: fs.readFileSync(dir + '/meta.json') });
     if (url.startsWith('https://i.pximg.net/')) return route.fulfill({ contentType: 'application/zip', headers: { 'access-control-allow-origin': '*' }, body: fs.readFileSync(dir + '/u.zip') });
-    if (url.startsWith('https://t0bbut.github.io/ugoconv/bookmarklet.js')) return route.fulfill({ contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' }, body: fs.readFileSync(dir + '/../docs/bookmarklet.js') });
+    if (url.startsWith('https://t0bbut.github.io/ugohen/bookmarklet.js')) return route.fulfill({ contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' }, body: fs.readFileSync(dir + '/../docs/bookmarklet.js') });
     return route.fulfill({ status: 404, body: '' });
   });
   await page.goto('https://www.pixiv.net/artworks/123');

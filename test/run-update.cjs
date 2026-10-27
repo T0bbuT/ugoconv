@@ -8,7 +8,7 @@ const dir = __dirname;
     const page = await browser.newPage();
     await page.route('**/*', (route) => {
       const url = route.request().url();
-      if (url.startsWith('https://t0bbut.github.io/ugoconv/version.json')) return route.fulfill({ contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ version: latest }) });
+      if (url.startsWith('https://t0bbut.github.io/ugohen/version.json')) return route.fulfill({ contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ version: latest }) });
       return route.fulfill({ contentType: 'text/html', body: '<!doctype html><body></body>' });
     });
     await page.goto('https://www.pixiv.net/artworks/1');

@@ -1,4 +1,4 @@
-// うごイラ変換: pixiv の作品ページ上で、うごイラを MP4 / GIF に端末内で変換する。
+// うごへん（うごイラ変換）: pixiv の作品ページ上で、うごイラを MP4 / GIF に端末内で変換する。
 // ユーザースクリプトとブックマークレットの両方でこのファイルを使う。
 import { unzipSync } from 'fflate';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
@@ -241,7 +241,7 @@ function createUI() {
     <style>${CSS}</style>
     <div class="fab">
       <div class="panel" hidden>
-        <div class="title">うごイラ変換 <small>v${__VERSION__}</small></div>
+        <div class="title">うごへん <small>v${__VERSION__}</small></div>
         <div class="status">形式を選んでください</div>
         <div class="bar"><div></div></div>
         <div class="row">
@@ -252,7 +252,7 @@ function createUI() {
         <div class="report" hidden><a target="_blank" rel="noopener">うまくいかないことを報告する</a></div>
         <div class="update" hidden><a target="_blank" rel="noopener"></a></div>
       </div>
-      <button class="btn toggle">うごイラ変換</button>
+      <button class="btn toggle">うごへん</button>
     </div>`;
   document.body.appendChild(host);
   const $ = (s) => root.querySelector(s);
@@ -363,7 +363,7 @@ export function takeAutoFormat() {
 // ---------- 更新のお知らせ ----------
 // iPhone の Userscripts アプリなどは自動更新されないので、1 日 1 回だけ最新の版数を確かめて知らせる
 
-const SITE = 'https://t0bbut.github.io/ugoconv/';
+const SITE = 'https://t0bbut.github.io/ugohen/';
 const UPDATE_KEY = 'ugoconv-update';
 
 function isNewer(a, b) {

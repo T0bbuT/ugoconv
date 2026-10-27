@@ -1,8 +1,8 @@
-# ugoconv（うごイラ変換・試作）
+# うごへん（ugohen）
 
 pixiv のうごイラを、**利用者の端末の中で** MP4 / GIF に変換するユーザースクリプトです。変換用のサーバーを持たないので運営費がかかりません。ブラウザで pixiv にログインしていれば R-18 作品も変換できます。
 
-- 配布ページ: https://t0bbut.github.io/ugoconv/
+- 配布ページ: https://t0bbut.github.io/ugohen/
 - 対応: PC（Tampermonkey / Violentmonkey）、iPhone（Safari + Userscripts アプリ、共有ショートカット）、Android（Firefox + Violentmonkey）、その他ブラウザはブックマークレット
 
 ## 仕組み
@@ -26,9 +26,9 @@ npm test        # ダミーの pixiv 応答で MP4 / GIF 変換を確認（Playw
 
 [MIT ライセンス](LICENSE)です。改変・再配布・別の場所での公開は自由です（著作権表示とライセンス文は残してください）。
 
-もしこのリポジトリの更新が止まったら、遠慮なく fork して続けてください。ただし、配布中のショートカット・ブックマークレット・ユーザースクリプトは `t0bbut.github.io/ugoconv` からコードを読み込むので、fork しただけでは利用者側は切り替わりません。fork 先では次を自分の URL に書き換えて GitHub Pages で公開し、利用者には新しい配布ページから入れ直してもらってください。
+もしこのリポジトリの更新が止まったら、遠慮なく fork して続けてください。ただし、配布中のショートカット・ブックマークレット・ユーザースクリプトは `t0bbut.github.io/ugohen` からコードを読み込むので、fork しただけでは利用者側は切り替わりません。fork 先では次を自分の URL に書き換えて GitHub Pages で公開し、利用者には新しい配布ページから入れ直してもらってください。
 
-- `build.mjs` と `src/` の中の `t0bbut.github.io/ugoconv`（ユーザースクリプトの `@connect` / `@updateURL` / `@downloadURL` や、ショートカット・ブックマークレットの読み込み先）
+- `build.mjs` と `src/` の中の `t0bbut.github.io/ugohen`（ユーザースクリプトの `@connect` / `@updateURL` / `@downloadURL` や、ショートカット・ブックマークレットの読み込み先）
 - iPhone 用ショートカット（iCloud リンク）は fork 先で作り直して配布し直す必要があります
 
 ## 注意
