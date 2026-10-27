@@ -17,65 +17,123 @@
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"うごへん","alternateName":["ugohen","うごイラ変換"],"applicationCategory":"MultimediaApplication","operatingSystem":"iOS, Android, Windows, macOS","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"url":"https://t0bbut.github.io/ugohen/"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap">
 <style>
-  :root { --bg: #f7f8fa; --fg: #1d1f23; --muted: #5b616b; --card: #fff; --line: #e3e6eb; --accent: #0096fa; --mark: #ff2d55; }
+  :root { --bg: #fff6e0; --dot: #f2dfae; --ink: #1a1a1a; --card: #fff; --fg: #1a1a1a; --muted: #5d5545; --blue: #2f6bff; --yellow: #ffd400; --pink: #ff5c8a; --green: #1e9e4a; --orange: #e07b00; --soft: #e8f0ff; --b: 2.5px solid var(--ink); }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #15171a; --fg: #e8eaed; --muted: #a0a6ae; --card: #1f2226; --line: #33373d; --accent: #3fb0ff; --mark: #ff5277; }
+    :root { --bg: #1d1a15; --dot: #2e2a22; --ink: #f3ead6; --card: #2a261f; --fg: #f3ead6; --muted: #c4b9a2; --blue: #5b8cff; --yellow: #ffd400; --pink: #ff7aa2; --green: #4cc777; --orange: #ffa940; --soft: #2c3550; }
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; }
-  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
-  h1 { font-size: 1.6rem; margin: 0 0 4px; }
-  h2 { font-size: 1.15rem; margin: 32px 0 8px; }
-  h3 { font-size: 1.1rem; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
-  p.lead { color: var(--muted); margin-top: 0; }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand svg { width: 44px; height: 44px; flex: none; }
-  .sub { font-size: 1rem; color: var(--muted); font-weight: 600; margin: 0 0 12px; }
-  .points { list-style: none; padding: 0; margin: 12px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
-  .points li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; font-size: .92rem; line-height: 1.5; }
-  .points b { display: block; color: var(--accent); }
-  .faq details { margin-top: 8px; }
-  .faq details p { margin: 8px 0 0; }
-  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 12px; margin-top: 16px; }
-  ol { padding-left: 1.4em; }
-  code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .9em; word-break: break-all; }
-  .btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; border: 0; border-radius: 999px; padding: 8px 18px; font-size: 1rem; cursor: pointer; }
-  textarea { width: 100%; height: 6em; font: 12px monospace; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.75 "M PLUS Rounded 1c", system-ui, -apple-system, "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    background-image: radial-gradient(var(--dot) 1.5px, transparent 1.5px); background-size: 18px 18px; }
+  main { max-width: 760px; margin: 0 auto; padding: 0 16px 48px; }
+  a { color: var(--blue); font-weight: 800; text-underline-offset: 3px; }
+  h2 { font-size: 1.45rem; font-weight: 800; margin: 40px 0 12px; line-height: 1.4; }
+  h2 small { display: block; font-size: .85rem; color: var(--muted); }
+  h3 { font-size: 1.08rem; font-weight: 800; margin: 28px 0 12px; display: inline-block; line-height: 1.2; background: linear-gradient(transparent 60%, var(--yellow) 60%); padding: 0 4px; }
+  @media (prefers-color-scheme: dark) { h3 { color: var(--ink); background: linear-gradient(transparent 60%, #7a6500 60%); } }
+  /* 最初の画面 */
+  .hero { text-align: center; padding: 28px 0 4px; }
+  .brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; font-size: 2.4rem; font-weight: 800; line-height: 1.2; }
+  .brand svg { width: 54px; height: 54px; flex: none; border: 3px solid var(--ink); border-radius: 15px; box-shadow: 3px 3px 0 var(--ink); background: var(--blue); }
+  .catch { display: inline-block; margin: 14px 0 0; padding: 3px 16px; font-size: 1.2rem; font-weight: 800; color: #1a1a1a; background: var(--yellow); border: 3px solid var(--ink); border-radius: 999px; transform: rotate(-2deg); }
+  .sub { margin: 10px 0 0; font-size: .9rem; color: var(--muted); font-weight: 800; }
+  .art { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 22px 0 18px; }
+  .strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+  .strip svg { width: 48px; height: 48px; display: block; border: 2.5px solid var(--ink); border-radius: 9px; }
+  .strip svg:nth-child(n) { animation: lit 1.6s steps(1) infinite; }
+  .strip svg:nth-child(2) { animation-delay: .4s; } .strip svg:nth-child(4) { animation-delay: .8s; } .strip svg:nth-child(3) { animation-delay: 1.2s; }
+  @keyframes lit { 0% { outline: 3px solid var(--pink); outline-offset: 2px; } 25%, 100% { outline: 0; } }
+  .arrow { font-size: 30px; font-weight: 800; }
+  .out { position: relative; }
+  .player { width: 116px; height: 116px; display: block; border: 3px solid var(--ink); border-radius: 16px; box-shadow: 5px 5px 0 var(--ink); }
+  .badge { position: absolute; right: -10px; bottom: -10px; font-size: 13px; font-weight: 800; color: #fff; background: var(--pink); border: 2.5px solid var(--ink); border-radius: 999px; padding: 1px 9px; }
+  .sky { fill: #8fd3ff; } .hill { fill: #6fcf73; } .ball { fill: #ff5c8a; stroke: #1a1a1a; stroke-width: 2; }
+  .bounce { animation: bounce 1.6s infinite; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); animation-timing-function: ease-in; } 50% { transform: translateY(32px); animation-timing-function: ease-out; } }
+  .lead { text-align: left; margin: 0 0 18px; }
+  .points { list-style: none; padding: 0; margin: 22px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .points li { background: var(--card); border: var(--b); border-radius: 14px; box-shadow: 3px 3px 0 var(--ink); padding: 10px 12px; font-size: .9rem; line-height: 1.55; }
+  .points b { display: block; font-size: .98rem; }
+  .points li:nth-child(1) b { color: var(--blue); } .points li:nth-child(2) b { color: var(--pink); } .points li:nth-child(3) b { color: var(--orange); } .points li:nth-child(4) b { color: var(--green); }
+  /* ボタン */
+  .btn, .cta { display: inline-block; font: inherit; font-weight: 800; color: #fff; background: var(--blue); text-decoration: none; border: 3px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink); padding: 8px 22px; cursor: pointer; transition: transform .08s, box-shadow .08s; }
+  .cta { font-size: 1.1rem; padding: 12px 34px; }
+  .btn:active, .cta:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
   .note { color: var(--muted); font-size: .9rem; }
+  .note b, .callout .note { color: var(--fg); }
+  code { background: var(--bg); border: 1px solid var(--ink); border-radius: 4px; padding: 0 4px; font-size: .9em; word-break: break-all; }
+  textarea { width: 100%; height: 6em; font: 12px monospace; border: var(--b); border-radius: 10px; background: var(--bg); color: var(--fg); }
   /* 端末の切り替え */
-  .tabs { display: flex; gap: 8px; position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 5; }
-  .tabs button { flex: 1; font: inherit; font-weight: 700; padding: 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
-  .tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .panel { background: none; border: 0; padding: 0; margin-top: 0; }
-  /* 画像付きの手順: 狭い画面では文→画像の縦並び、広い画面では横並び */
+  .tabs { display: flex; gap: 10px; position: sticky; top: 0; background: var(--bg); padding: 12px 0; margin-top: 8px; z-index: 5; }
+  .tabs button { flex: 1; font: inherit; font-weight: 800; padding: 9px 4px; color: var(--fg); background: var(--card); border: var(--b); border-radius: 12px; box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: #1a1a1a; background: var(--yellow); transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  /* 手順: 画像は小さく文の横に。タップで拡大 */
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
-  .step { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 18px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .step { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; align-items: center; background: var(--card); border: var(--b); border-radius: 16px; box-shadow: 4px 4px 0 var(--ink); padding: 12px; }
   .step.text { grid-template-columns: minmax(0, 1fr); }
-  .step figure { margin: 0; }
-  .step img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
+  .step figure { margin: 0; position: relative; cursor: zoom-in; }
+  .step figure::after { content: "＋"; position: absolute; right: -6px; bottom: -6px; width: 24px; height: 24px; display: grid; place-items: center; font-size: 14px; font-weight: 800; color: #1a1a1a; background: var(--yellow); border: 2px solid var(--ink); border-radius: 50%; }
+  .step img { display: block; width: 100%; height: auto; border: 2px solid var(--ink); border-radius: 8px; }
   .step .txt { min-width: 0; }
-  .step .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; }
-  .step .head { font-size: 1.05rem; font-weight: 700; margin: 6px 0 4px; }
+  .num { display: inline-grid; place-items: center; width: 30px; height: 30px; font-weight: 800; color: #fff; background: var(--pink); border: 2.5px solid var(--ink); border-radius: 50%; }
+  .step .head { font-size: 1.02rem; font-weight: 800; margin: 6px 0 2px; line-height: 1.5; }
   .step .note { margin: 0; }
-  .step .btn { margin: 4px 0 8px; }
-  .callout { background: color-mix(in srgb, var(--mark) 10%, var(--card)); border: 2px solid var(--mark); border-radius: 12px; padding: 12px 16px; }
-  .callout .head { color: var(--mark); font-weight: 700; margin: 0 0 4px; }
-  .callout .note, .note b { color: var(--fg); }
-  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; margin-top: 16px; }
-  summary { font-weight: 700; cursor: pointer; }
+  .step .btn { margin: 6px 0 8px; }
+  .callout { background: var(--soft); border: var(--b); border-radius: 16px; box-shadow: 4px 4px 0 var(--ink); padding: 12px 16px; }
+  .callout .head { color: var(--pink); font-weight: 800; margin: 0 0 4px; }
+  /* 折りたたみ */
+  details { background: var(--card); border: var(--b); border-radius: 14px; box-shadow: 3px 3px 0 var(--ink); padding: 12px 16px; margin-top: 14px; }
+  summary { font-weight: 800; cursor: pointer; }
+  details p { margin: 8px 0 0; }
+  details.prep { background: var(--soft); margin-top: 8px; }
+  details.prep > summary { font-size: 1.05rem; }
+  details.prep[open] > summary { margin-bottom: 14px; }
+  .prep-done { display: block; margin: 16px auto 4px; color: #1a1a1a; background: var(--yellow); }
+  .panel { margin: 0; }
+  .box { background: var(--card); border: var(--b); border-radius: 16px; box-shadow: 4px 4px 0 var(--ink); padding: 6px 18px 14px; }
+  .box ol { padding-left: 1.4em; }
+  .box li { margin: 6px 0; }
+  .faq details { margin-top: 10px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 2.5px dashed var(--ink); }
+  footer .note { margin: 6px 0; }
+  /* 画像の拡大表示 */
+  #zoom { border: 3px solid var(--ink); border-radius: 18px; padding: 0; background: var(--card); max-width: min(92vw, 420px); box-shadow: 6px 6px 0 var(--ink); }
+  #zoom::backdrop { background: rgb(0 0 0 / .6); }
+  #zoom img { display: block; width: 100%; height: auto; max-height: 82vh; object-fit: contain; }
+  #zoom p { margin: 0; padding: 8px 14px 12px; font-weight: 800; }
+  /* スマホ: 左右の余白を詰め、画像と文を 1:1 に */
   @media (max-width: 560px) {
-    .step { grid-template-columns: minmax(0, 1fr); }
-    .step .txt { order: -1; }
-    .step figure { max-width: 300px; width: 100%; margin: 0 auto; }
+    main { padding: 0 8px 40px; }
+    details.prep { padding: 10px 6px; border-radius: 12px; }
+    details.prep > summary { padding: 0 6px; }
+    .step { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 10px; border-radius: 14px; box-shadow: 3px 3px 0 var(--ink); }
+    .step.text { grid-template-columns: minmax(0, 1fr); }
+    .step .head { font-size: .98rem; }
+    .step .note { font-size: .86rem; line-height: 1.65; }
   }
+  @media (min-width: 700px) {
+    .points { grid-template-columns: repeat(4, 1fr); }
+    .step { grid-template-columns: 220px minmax(0, 1fr); gap: 22px; }
+    .player { width: 150px; height: 150px; }
+    .strip svg { width: 64px; height: 64px; }
+    .hero { padding-top: 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bounce, .strip svg { animation: none !important; } }
 </style>
 </head>
 <body>
 <main>
-  <h1 class="brand"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0096fa"/><path d="M36 26v48l40-24z" fill="#fff"/></svg>うごへん</h1>
-  <p class="sub">うごイラ変換・コンバーター（MP4 動画 / GIF）</p>
+  <header class="hero">
+    <h1 class="brand"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M38 28v44l36-22z" fill="#fff"/></svg>うごへん</h1>
+    <p class="catch">うごイラ、ぽんっと動画に！</p>
+    <p class="sub">うごイラ変換・コンバーター（MP4 動画 / GIF）</p>
+    <div class="art" aria-hidden="true"><div class="strip"><svg viewBox="0 0 60 60"><rect class="sky" width="60" height="60"/><path class="hill" d="M0 52 Q20 44 36 50 T60 48 V60 H0z"/><circle class="ball" cx="30" cy="14" r="8"/></svg><svg viewBox="0 0 60 60"><rect class="sky" width="60" height="60"/><path class="hill" d="M0 52 Q20 44 36 50 T60 48 V60 H0z"/><circle class="ball" cx="30" cy="30" r="8"/></svg><svg viewBox="0 0 60 60"><rect class="sky" width="60" height="60"/><path class="hill" d="M0 52 Q20 44 36 50 T60 48 V60 H0z"/><circle class="ball" cx="30" cy="30" r="8"/></svg><svg viewBox="0 0 60 60"><rect class="sky" width="60" height="60"/><path class="hill" d="M0 52 Q20 44 36 50 T60 48 V60 H0z"/><circle class="ball" cx="30" cy="46" r="8"/></svg></div><div class="arrow">→</div><div class="out"><svg class="player" viewBox="0 0 60 60"><rect class="sky" width="60" height="60"/><path class="hill" d="M0 52 Q20 44 36 50 T60 48 V60 H0z"/><circle class="ball bounce" cx="30" cy="14" r="8"/></svg><span class="badge">MP4</span></div></div>
   <p class="lead">うごへんは、pixiv のうごイラ（うごいら）を MP4 動画や GIF に変換して保存するコンバーターです。変換はあなたの端末の中で行うので、サーバー代がかからず、ずっと無料で続けられます。</p>
+    <a class="cta" href="#how">使い方を見る</a>
+  </header>
   <ul class="points">
     <li><b>無料・登録不要</b>広告もありません</li>
     <li><b>スマホでも使える</b>iPhone・Android・PC</li>
@@ -84,15 +142,15 @@
   </ul>
   <p class="note">使う端末を選んでください。画像の赤い枠のところをタップします。機種や OS のバージョンによって、見た目が少し違うことがあります。</p>
 
-  <div class="tabs" role="tablist">
+  <div class="tabs" role="tablist" id="how">
     <button id="tab-iphone" role="tab" aria-controls="iphone">iPhone</button>
     <button id="tab-android" role="tab" aria-controls="android">Android</button>
     <button id="tab-pc" role="tab" aria-controls="pc">PC</button>
   </div>
 
   <section class="panel" id="iphone" role="tabpanel" aria-labelledby="tab-iphone">
-    <h2>iPhone（ショートカット 1 つだけ）</h2>
-    <h3>準備（最初の 1 回だけ）</h3>
+    <h2>iPhone<small>ショートカット 1 つだけ</small></h2>
+    <details class="prep" open><summary>準備（最初の 1 回だけ）</summary>
     <ol class="steps">
       <li class="step text"><div class="txt"><span class="num">1</span><p class="head">Safari で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく</p><p class="note">R-18 の変換に必要です。pixiv アプリのログインとは別です。</p></div></li>
       <li class="step text"><div class="txt"><span class="num">2</span><p class="head">「ショートカットを追加」を押す</p><p class="note"><a class="btn" href="https://www.icloud.com/shortcuts/dae74dbe309644df936f919d35fafde4">ショートカットを追加</a><br>iPhone の Safari でこのページを開いて押してください。</p></div></li>
@@ -103,6 +161,8 @@
       <li class="step"><figure><img src="img/i-sc-plus.jpg" alt="① うごイラ変換の緑の ＋ → ② 右上の ✓" loading="lazy"></figure><div class="txt"><span class="num">7</span><p class="head">① うごイラ変換の緑の ＋ → ② 右上の ✓</p><p class="note">「よく使う項目」に入ります。</p></div></li>
       <li class="step"><figure><img src="img/i-sc-done.jpg" alt="1 段目に「うごイラ変換」が出れば完了" loading="lazy"></figure><div class="txt"><span class="num">8</span><p class="head">1 段目に「うごイラ変換」が出れば完了</p><p class="note">pixiv アプリや Safari で共有を開いたときも、1 段目に出るようになります。ほかに「よく使う項目」に入れているものがあると、その後ろに並ぶことがあります。</p></div></li>
     </ol>
+    <button class="btn prep-done" type="button">準備できた！（次から閉じておく）</button>
+    </details>
     <h3>pixiv アプリから使うとき</h3>
     <ol class="steps">
       <li class="callout"><p class="head">pixiv アプリからは、ショートカットを 2 回使います</p><p class="note">1 回目は作品を Safari で開くだけで、まだ変換は始まりません。Safari で開いたら、もう一度「うごイラ変換」を押すと変換が始まります。</p></li>
@@ -133,16 +193,19 @@
   </section>
 
   <section class="panel" id="android" role="tabpanel" aria-labelledby="tab-android">
-    <h2>Android（Chrome にブックマークを 1 つ）</h2>
-    <h3>準備（最初の 1 回だけ）</h3>
+    <h2>Android<small>Chrome にブックマークを 1 つ</small></h2>
+    <details class="prep" open><summary>準備（最初の 1 回だけ）</summary>
     <ol class="steps">
       <li class="step text"><div class="txt"><span class="num">1</span><p class="head">Chrome で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく</p><p class="note">R-18 の変換に必要です。pixiv アプリのログインとは別です。</p></div></li>
       <li class="step text"><div class="txt"><span class="num">2</span><p class="head">「コードをコピー」を押す</p><p class="note"><button class="btn" id="copy">コードをコピー</button> <span id="copied"></span><br>Chrome でこのページを開いて押してください。「コピーしました」と出れば OK。</p></div></li>
       <li class="step"><figure><img src="img/a-star.jpg" alt="右上の「︙」→「☆」" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">右上の「︙」→「☆」</p><p class="note">このページをブックマークに入れます。</p></div></li>
       <li class="step"><figure><img src="img/a-edit.jpg" alt="画面の下に出るバーをタップ" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">画面の下に出るバーをタップ</p><p class="note">ブックマークの編集画面が開きます。</p></div></li>
-      <li class="step"><figure><img src="img/a-fields.jpg" alt="名前と URL を書き換える" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">名前と URL を書き換える</p><p class="note">① 名前を「うごへん」にする　② URL を全部消して、コピーしたコードを貼り付ける</p></div></li>
-      <li class="step"><figure><img src="img/a-back.jpg" alt="左上の「←」で保存" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">左上の「←」で保存</p><p class="note">これで準備は終わりです。</p></div></li>
+      <li class="step"><figure><img src="img/a-url.jpg" alt="URL を全部消して、コピーしたコードを貼り付ける" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">URL を全部消して、コピーしたコードを貼り付ける</p><p class="note">貼り付けると、URL 欄の最後が「})();」になります（コードの終わりの部分が見えています）。</p></div></li>
+      <li class="step"><figure><img src="img/a-name.jpg" alt="名前の「｜」から後ろを消して「うごへん」だけにする" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">名前の「｜」から後ろを消して「うごへん」だけにする</p><p class="note">短くしておくと、アドレスバーで呼び出すときに見つけやすくなります。</p></div></li>
+      <li class="step"><figure><img src="img/a-back.jpg" alt="左上の「←」で保存" loading="lazy"></figure><div class="txt"><span class="num">7</span><p class="head">左上の「←」で保存</p><p class="note">これで準備は終わりです。</p></div></li>
     </ol>
+    <button class="btn prep-done" type="button">準備できた！（次から閉じておく）</button>
+    </details>
     <h3>pixiv アプリから使うとき</h3>
     <ol class="steps">
       <li class="step"><figure><img src="img/a-share.jpg" alt="pixiv アプリで ① 共有 → ②「Chrome」" loading="lazy"></figure><div class="txt"><span class="num">1</span><p class="head">pixiv アプリで ① 共有 → ②「Chrome」</p><p class="note">作品が Chrome で開きます。開いたら、下の「Chrome で使うとき」に進んでください。</p></div></li>
@@ -150,11 +213,11 @@
     <h3>Chrome で使うとき</h3>
     <ol class="steps">
       <li class="step"><figure><img src="img/a-open.jpg" alt="Chrome のアドレスバーをタップ" loading="lazy"></figure><div class="txt"><span class="num">1</span><p class="head">Chrome のアドレスバーをタップ</p></div></li>
-      <li class="step"><figure><img src="img/a-type.jpg" alt="①「うごへ」と打つ → ② ☆うごへん をタップ" loading="lazy"></figure><div class="txt"><span class="num">2</span><p class="head">①「うごへ」と打つ → ② ☆うごへん をタップ</p><p class="note">☆ の付いた候補は一番下に出ます。キーボードに隠れて見えないときは、キーボードを閉じてください。</p></div></li>
+      <li class="step"><figure><img src="img/a-type.jpg" alt="①「うごへん」と打つ → ② ☆ の「うごへん」をタップ" loading="lazy"></figure><div class="txt"><span class="num">2</span><p class="head">①「うごへん」と打つ → ② ☆ の「うごへん」をタップ</p><p class="note">☆ の付いた候補（ブックマーク）を選びます。すぐ上にある青いアイコンの「うごへん｜…」は、このページの履歴なので違います。☆ が見えないときは、キーボードを閉じてください。</p></div></li>
       <li class="step"><figure><img src="img/a-format.jpg" alt="MP4 か GIF を選ぶ" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">MP4 か GIF を選ぶ</p><p class="note">迷ったら MP4 がおすすめ（軽くてきれい）。</p></div></li>
       <li class="step"><figure><img src="img/a-save.jpg" alt="「保存する」を押す" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">「保存する」を押す</p><p class="note">端末の「ダウンロード」フォルダに入ります。</p></div></li>
     </ol>
-    <p class="note">ブックマークの名前は、ひらがなだけの珍しい名前にしておくと、変換なしで数文字打つだけで候補の上の方に出ます。保存した動画は Google フォトの「デバイス内のフォト」からも見られます。</p>
+    <p class="note">ブックマークの名前は、ひらがなだけの珍しい名前にしておくと、変換なしで打つだけで候補に出ます。保存した動画は Google フォトの「デバイス内のフォト」からも見られます。</p>
     <p class="note">PC の Chrome に同じ Google アカウントでログインしているなら、PC でページ下の「うごへん」ボタンをブックマークバーへドラッグするだけでも、スマホの Chrome に同期されます。</p>
     <p class="note">ブックマークは実行のたびに最新版のコードを読み込むので、更新のたびに入れ直す必要はありません。</p>
     <details>
@@ -169,26 +232,26 @@
   </section>
 
   <section class="panel" id="pc" role="tabpanel" aria-labelledby="tab-pc">
-    <h2>PC（Chrome / Edge / Firefox）</h2>
-    <section>
+    <h2>PC<small>Chrome / Edge / Firefox</small></h2>
+    <div class="box">
       <ol>
         <li>拡張機能 <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Tampermonkey</a> か <a href="https://violentmonkey.github.io/" target="_blank" rel="noopener">Violentmonkey</a> を入れる <span class="note">（リンク先で、使っているブラウザ用の入手ボタンが出ます）</span></li>
         <li><a class="btn" href="ugoira-converter.user.js">スクリプトを追加</a> を押してインストール</li>
         <li>使うブラウザで <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく（R-18 の変換に必要です）</li>
       </ol>
       <p>pixiv の作品ページの右下に出る「うごへん」ボタンを押して、MP4 か GIF を選びます。</p>
-    </section>
+    </div>
   </section>
 
   <h2>そのほかのブラウザ（ブックマークレット）</h2>
-  <section>
+  <div class="box">
     <p>下のコードを URL にしたブックマークを作り、pixiv の作品ページで実行します。</p>
     <p><a class="btn" id="bm-link" href="#">うごへん</a> <span class="note">PC はこのボタンをブックマークバーへドラッグで登録できます</span></p>
     <textarea id="bm" readonly></textarea>
-  </section>
+  </div>
 
   <h2>よくある質問</h2>
-  <section class="faq">
+  <div class="faq">
     <details><summary>うごイラを動画（MP4）にして保存するには？</summary><p>上の手順で準備したあと、作品ページで変換して「MP4」を選びます。iPhone は「写真」アプリ、Android はギャラリーや Google フォトに動画として保存できます。</p></details>
     <details><summary>GIF にもできますか？</summary><p>できます。変換するときに「GIF」を選んでください。GIF はファイルが大きく、スマホでは時間がかかることがあります。きれいに残したいときは MP4 がおすすめです。</p></details>
     <details><summary>iPhone でうごイラを保存するには？</summary><p>ショートカットを 1 つ追加するだけです。pixiv アプリや Safari の共有ボタンから「うごイラ変換」を選ぶと、Safari で変換して保存できます。ほかのアプリを入れる必要はありません。</p></details>
@@ -196,18 +259,21 @@
     <details><summary>ログイン情報や作品をどこかに送っていませんか？</summary><p>送っていません。変換はすべてあなたの端末の中で行い、うごへんのサーバーはありません。パスワードを入力する場面もありません。コードはすべて <a href="https://github.com/T0bbuT/ugohen">GitHub</a> で公開しています。</p></details>
     <details><summary>お金はかかりますか？</summary><p>かかりません。変換用のサーバーを持たないので運営費がほぼかからず、広告や寄付に頼らずに続けられる作りにしています。</p></details>
     <details><summary>変換した動画を SNS に載せてもいいですか？</summary><p>作品の著作権は作者にあります。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p></details>
-  </section>
+  </div>
 
   <h2>ご意見・不具合の報告</h2>
-  <section>
+  <div class="box">
     <p>うまく動かないとき、こうしてほしいこと、感想などはフォームから送れます。アカウントは要りません。</p>
     <p><a class="btn" href="https://tally.so/r/yXX4a0" target="_blank" rel="noopener">フォームを開く</a></p>
-  </section>
+  </div>
 
-  <p class="note">うごへんは pixiv 非公式のツールで、pixiv（ピクシブ株式会社）とは関係ありません。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p>
-  <p class="note">コードは <a href="https://github.com/T0bbuT/ugohen">GitHub</a> で <a href="https://github.com/T0bbuT/ugohen/blob/main/LICENSE">MIT ライセンス</a>として公開しています。更新が止まったときは、誰でも fork して別の URL で配布してかまいません。</p>
-  <p class="note">手順の画像では、作品・作者名・作品名を見本に置き換え、ほかのアプリ名などはぼかしています。</p>
+  <footer>
+    <p class="note">うごへんは pixiv 非公式のツールで、pixiv（ピクシブ株式会社）とは関係ありません。変換したファイルは個人で楽しむ範囲で使い、作者の許可なく転載しないでください。</p>
+    <p class="note">コードは <a href="https://github.com/T0bbuT/ugohen">GitHub</a> で <a href="https://github.com/T0bbuT/ugohen/blob/main/LICENSE">MIT ライセンス</a>として公開しています。更新が止まったときは、誰でも fork して別の URL で配布してかまいません。</p>
+    <p class="note">手順の画像では、作品・作者名・作品名を見本に置き換え、ほかのアプリ名などはぼかしています。</p>
+  </footer>
 </main>
+<dialog id="zoom"><form method="dialog"><button style="all:unset;display:block;cursor:zoom-out"><img alt=""><p></p></button></form></dialog>
 <script>
   const BOOKMARKLET = "javascript:(function () { fetch('https://t0bbut.github.io/ugohen/bookmarklet.js?t=' + Date.now(), { cache: 'no-store', credentials: 'omit' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); }).then(function (c) { (0, eval)(c); }).catch(function (e) { alert('うごイラ変換: 読み込みに失敗しました（' + e.message + '）'); }); })();";
   document.getElementById('bm').value = BOOKMARKLET;
@@ -231,6 +297,28 @@
   const ua = navigator.userAgent;
   const guess = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iphone' : /Android/.test(ua) ? 'android' : 'pc';
   show(['iphone', 'android', 'pc'].includes(location.hash.slice(1)) ? location.hash.slice(1) : guess);
+  // 準備: 「準備できた」を押した端末では次から閉じておく
+  const PREP = 'ugohen-prep-done';
+  let prepDone = false;
+  try { prepDone = localStorage.getItem(PREP) === '1'; } catch {}
+  for (const d of document.querySelectorAll('details.prep')) {
+    if (prepDone) d.open = false;
+    d.querySelector('.prep-done').addEventListener('click', () => {
+      try { localStorage.setItem(PREP, '1'); } catch {}
+      for (const x of document.querySelectorAll('details.prep')) x.open = false;
+      d.nextElementSibling?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+  // 手順の画像をタップで拡大
+  const zoom = document.getElementById('zoom');
+  for (const f of document.querySelectorAll('.step figure')) {
+    f.addEventListener('click', () => {
+      const img = f.querySelector('img');
+      zoom.querySelector('img').src = img.src;
+      zoom.querySelector('p').textContent = img.alt;
+      zoom.showModal();
+    });
+  }
 </script>
 </body>
 </html>
