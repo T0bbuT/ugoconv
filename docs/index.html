@@ -79,6 +79,7 @@
   .step img { display: block; width: 100%; height: auto; border: 2px solid var(--ink); border-radius: 8px; }
   .step .txt { min-width: 0; }
   .num { display: inline-grid; place-items: center; width: 30px; height: 30px; font-weight: 800; color: #fff; background: var(--pink); border: 2.5px solid var(--ink); border-radius: 50%; }
+  .ico { display: inline-block; width: 1.4em; height: 1.4em; vertical-align: -.35em; margin: 0 .15em; }
   .step .head { font-size: 1.02rem; font-weight: 800; margin: 6px 0 2px; line-height: 1.5; }
   .step .note { margin: 0; }
   .step .btn { margin: 6px 0 8px; }
@@ -153,13 +154,16 @@
     <details class="prep" open><summary>準備（最初の 1 回だけ）</summary>
     <ol class="steps">
       <li class="step text"><div class="txt"><span class="num">1</span><p class="head">Safari で <a href="https://accounts.pixiv.net/login" target="_blank" rel="noopener">pixiv にログイン</a>しておく</p><p class="note">R-18 の変換に必要です。pixiv アプリのログインとは別です。</p></div></li>
-      <li class="step text"><div class="txt"><span class="num">2</span><p class="head">「ショートカットを追加」を押す</p><p class="note"><a class="btn" href="https://www.icloud.com/shortcuts/dae74dbe309644df936f919d35fafde4">ショートカットを追加</a><br>iPhone の Safari でこのページを開いて押してください。</p></div></li>
-      <li class="step"><figure><img src="img/i-add.jpg" alt="もう一度「ショートカットを追加」を押す" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">もう一度「ショートカットを追加」を押す</p><p class="note">ショートカットアプリに追加されます。</p></div></li>
-      <li class="step"><figure><img src="img/i-sc-share.jpg" alt="ショートカットアプリで ①「うごイラ変換」を長押し → ②「共有」" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">ショートカットアプリで ①「うごイラ変換」を長押し → ②「共有」</p><p class="note">ここからは、うごイラ変換を共有シートの 1 段目に出すおすすめ設定です。追加した直後にそのままやっておくと、あとで探さずに済みます。</p></div></li>
-      <li class="step"><figure><img src="img/i-sc-more.jpg" alt="「表示を増やす」" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">「表示を増やす」</p></div></li>
-      <li class="step"><figure><img src="img/i-sc-editbtn.jpg" alt="一番下の「アクションを編集」" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">一番下の「アクションを編集」</p></div></li>
-      <li class="step"><figure><img src="img/i-sc-plus.jpg" alt="① うごイラ変換の緑の ＋ → ② 右上の ✓" loading="lazy"></figure><div class="txt"><span class="num">7</span><p class="head">① うごイラ変換の緑の ＋ → ② 右上の ✓</p><p class="note">「よく使う項目」に入ります。</p></div></li>
-      <li class="step"><figure><img src="img/i-sc-done.jpg" alt="1 段目に「うごイラ変換」が出れば完了" loading="lazy"></figure><div class="txt"><span class="num">8</span><p class="head">1 段目に「うごイラ変換」が出れば完了</p><p class="note">pixiv アプリや Safari で共有を開いたときも、1 段目に出るようになります。ほかに「よく使う項目」に入れているものがあると、その後ろに並ぶことがあります。</p></div></li>
+      <li class="step"><figure><img src="img/i-set-search.jpg" alt="設定アプリで「ショートカット」と検索 →「ショートカット（アプリ）」" loading="lazy"></figure><div class="txt"><span class="num">2</span><p class="head">設定アプリ<svg class="ico" viewBox="0 0 100 100" role="img" aria-label="設定"><rect width="100" height="100" rx="23" fill="#8e8e93"/><polygon points="50.0,16.0 54.4,16.3 57.0,23.9 60.3,25.1 67.0,20.6 70.7,23.0 69.1,30.9 71.4,33.6 79.4,33.0 81.4,37.0 76.1,43.0 76.8,46.5 84.0,50.0 83.7,54.4 76.1,57.0 74.9,60.3 79.4,67.0 77.0,70.7 69.1,69.1 66.4,71.4 67.0,79.4 63.0,81.4 57.0,76.1 53.5,76.8 50.0,84.0 45.6,83.7 43.0,76.1 39.7,74.9 33.0,79.4 29.3,77.0 30.9,69.1 28.6,66.4 20.6,67.0 18.6,63.0 23.9,57.0 23.2,53.5 16.0,50.0 16.3,45.6 23.9,43.0 25.1,39.7 20.6,33.0 23.0,29.3 30.9,30.9 33.6,28.6 33.0,20.6 37.0,18.6 43.0,23.9 46.5,23.2" fill="#e5e5ea"/><circle cx="50" cy="50" r="17" fill="#8e8e93"/><circle cx="50" cy="50" r="7" fill="#e5e5ea"/></svg>で「ショートカット」と検索 →「ショートカット（アプリ）」</p><p class="note">うごへんが pixiv のページの中で変換するための設定です。ここから 3 ステップ。</p></div></li>
+      <li class="step"><figure><img src="img/i-set-detail.jpg" alt="「詳細」をタップ" loading="lazy"></figure><div class="txt"><span class="num">3</span><p class="head">「詳細」をタップ</p></div></li>
+      <li class="step"><figure><img src="img/i-allow-script.jpg" alt="「スクリプトの実行を許可」をオン" loading="lazy"></figure><div class="txt"><span class="num">4</span><p class="head">「スクリプトの実行を許可」をオン</p><p class="note">すでにオンなら、そのままで OK。</p></div></li>
+      <li class="step text"><div class="txt"><span class="num">5</span><p class="head">「ショートカットを追加」を押す</p><p class="note"><a class="btn" href="https://www.icloud.com/shortcuts/dae74dbe309644df936f919d35fafde4">ショートカットを追加</a><br>iPhone の Safari でこのページを開いて押してください。</p></div></li>
+      <li class="step"><figure><img src="img/i-add.jpg" alt="もう一度「ショートカットを追加」を押す" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">もう一度「ショートカットを追加」を押す</p><p class="note">ショートカットアプリに追加されます。</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-share.jpg" alt="ショートカットアプリで ①「うごイラ変換」を長押し → ②「共有」" loading="lazy"></figure><div class="txt"><span class="num">7</span><p class="head">ショートカットアプリで ①「うごイラ変換」を長押し → ②「共有」</p><p class="note">ここからは、うごイラ変換を共有シートの 1 段目に出すおすすめ設定です。追加した直後にそのままやっておくと、あとで探さずに済みます。</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-more.jpg" alt="「表示を増やす」" loading="lazy"></figure><div class="txt"><span class="num">8</span><p class="head">「表示を増やす」</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-editbtn.jpg" alt="一番下の「アクションを編集」" loading="lazy"></figure><div class="txt"><span class="num">9</span><p class="head">一番下の「アクションを編集」</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-plus.jpg" alt="① うごイラ変換の緑の ＋ → ② 右上の ✓" loading="lazy"></figure><div class="txt"><span class="num">10</span><p class="head">① うごイラ変換の緑の ＋ → ② 右上の ✓</p><p class="note">「よく使う項目」に入ります。</p></div></li>
+      <li class="step"><figure><img src="img/i-sc-done.jpg" alt="1 段目に「うごイラ変換」が出れば完了" loading="lazy"></figure><div class="txt"><span class="num">11</span><p class="head">1 段目に「うごイラ変換」が出れば完了</p><p class="note">pixiv アプリや Safari で共有を開いたときも、1 段目に出るようになります。ほかに「よく使う項目」に入れているものがあると、その後ろに並ぶことがあります。</p></div></li>
     </ol>
     <button class="btn prep-done" type="button">準備できた！（次から閉じておく）</button>
     </details>
@@ -179,7 +183,7 @@
       <li class="step"><figure><img src="img/i-panel.jpg" alt="終わったら「保存する」" loading="lazy"></figure><div class="txt"><span class="num">5</span><p class="head">終わったら「保存する」</p></div></li>
       <li class="step"><figure><img src="img/i-video.jpg" alt="「ビデオを保存」" loading="lazy"></figure><div class="txt"><span class="num">6</span><p class="head">「ビデオを保存」</p><p class="note">写真アプリに入ります。</p></div></li>
     </ol>
-    <p class="note">動かない場合は 設定 → アプリ → ショートカット → 詳細 →「スクリプトの実行を許可」をオンにしてください。中身や自分で作る手順は <a href="shortcut.html">こちら</a>。</p>
+    <p class="note">動かない場合は、準備の 2〜4 番の「スクリプトの実行を許可」がオンになっているか確かめてください。中身や自分で作る手順は <a href="shortcut.html">こちら</a>。</p>
     <p class="note">ショートカットは実行のたびに、GitHub で公開しているコードの最新版を読み込んで動くので、更新のたびに入れ直す必要はありません。</p>
     <details>
       <summary>別の方法: Userscripts アプリ</summary>
